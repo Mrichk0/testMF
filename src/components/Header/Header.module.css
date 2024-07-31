@@ -1,0 +1,28 @@
+/* .header {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+} */
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 5px 10px;
+  margin-left: 10px;
+}
+
+.menuButton:hover {
+  background-color: #f0f0f0;
+}
+
+/* Add any additional styling as needed */

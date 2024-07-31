@@ -1,0 +1,52 @@
+/* .categories {
+  
+} */
+
+.inMenu {
+ 
+  color: white;
+}
+
+.categoryGroup {
+  margin-bottom: 15px;
+}
+
+.categoryButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 0;
+  text-align: left;
+}
+
+.inMenu .categoryButton {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.subcategoryList {
+  margin-left: 15px;
+}
+
+.subcategoryButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 0;
+  text-align: left;
+}
+
+.inMenu .subcategoryButton {
+  color: white;
+}
+
+.active {
+  text-decoration: underline;
+}
+
+.mainCategories {
+  list-style-type: none;
+  padding-left: 0;
+}
+

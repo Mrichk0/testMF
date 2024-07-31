@@ -1,0 +1,53 @@
+.additionalFilters {
+  margin-bottom: 20px;
+}
+
+.dropdownToggle {
+  padding: 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.dropdownContent {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.filterButtons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.filterButton {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filterButtonActive {
+  background-color: #e0e0e0;
+  border-color: #999;
+}
+
+.filterButtonDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clearFilters {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}

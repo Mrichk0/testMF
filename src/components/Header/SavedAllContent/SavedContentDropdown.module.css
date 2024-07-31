@@ -1,0 +1,72 @@
+.savedContentDropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.savedContentButton {
+  /* background-color: transparent; */
+  border: none;
+  color: rgb(34, 31, 31);
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.savedContentList {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #4a4a4a;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 500px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.savedContentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #5a5a5a;
+}
+
+.savedContentHeader h3 {
+  margin: 0;
+}
+
+.closeButton, .deleteButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.savedContentItem {
+  padding: 10px;
+  border-bottom: 1px solid #5a5a5a;
+  position: relative;
+}
+
+.savedContentItem h4 {
+  margin: 0 0 5px 0;
+}
+
+.savedContentItem p {
+  margin: 0;
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.noContent {
+  padding: 10px;
+  text-align: center;
+}

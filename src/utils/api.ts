@@ -1,0 +1,257 @@
+import axios from "axios";
+import { AllContent, Category, Subcategory, Filters } from "../types";
+
+const API_URL = "http://0.0.0.0:8055";
+
+export const fetchCategoriesAndCourses = async (): Promise<{
+  categories: Category[];
+  subcategories: Subcategory[];
+}> => {
+  try {
+    const [categoriesResponse, subcategoriesResponse] = await Promise.all([
+      axios.get(`${API_URL}/items/categories`, {
+        params: {
+          fields: ["id", "translations.*"],
+        },
+      }),
+      axios.get(`${API_URL}/items/subcategories`, {
+        params: {
+          fields: ["id", "translations.*", "categories.categories_id"],
+        },
+      }),
+    ]);
+
+    console.log("API responses:", {
+      categories: categoriesResponse.data,
+      subcategories: subcategoriesResponse.data,
+    });
+
+    return {
+      categories: categoriesResponse.data.data,
+      subcategories: subcategoriesResponse.data.data,
+    };
+  } catch (error) {
+    console.error("Error fetching categories and subcategories:", error);
+    throw error;
+  }
+};
+
+export interface FetchFilteredAllContentParams {
+  pageParam?: number;
+  categoryId: string | null;
+  subcategoryIds: string[];
+  filters: Filters;
+  selectedYear: number | null;
+}
+
+export const fetchFilteredAllContent = async ({
+  pageParam = 1,
+  categoryId,
+  subcategoryIds,
+  filters,
+  selectedYear,
+}: FetchFilteredAllContentParams): Promise<{
+  data: AllContent[];
+  nextPage: number | undefined;
+  totalItems: number;
+}> => {
+  const limit = 10;
+  let params: any = {
+    fields: [
+      "id",
+      "translations.*",
+      "start_date",
+      "end_date",
+      "year",
+      "photo.*",
+      "video",
+      "audio",
+      "category.id",
+      "category.translations.*",
+      "subcategories.subcategories_id",
+      "subcategories.translations.*",
+      "is_current",
+      "slug",
+    ],
+    sort: ["-start_date"],
+    page: pageParam,
+    limit: limit,
+  };
+
+  if (
+    categoryId ||
+    subcategoryIds.length > 0 ||
+    Object.values(filters).some(Boolean) ||
+    selectedYear
+  ) {
+    params.filter = {
+      _and: [],
+    };
+
+    if (selectedYear) {
+      params.filter._and.push({
+        year: {
+          _eq: selectedYear,
+        },
+      });
+    }
+
+    if (categoryId) {
+      params.filter._and.push({
+        category: {
+          id: {
+            _eq: categoryId,
+          },
+        },
+      });
+    }
+
+    if (subcategoryIds.length > 0) {
+      params.filter._and.push({
+        subcategories: {
+          subcategories_id: {
+            _in: subcategoryIds,
+          },
+        },
+      });
+    }
+
+    if (filters.hasVideo) {
+      params.filter._and.push({ video: { _nnull: true } });
+    }
+    if (filters.hasAudio) {
+      params.filter._and.push({ audio: { _nnull: true } });
+    }
+    if (filters.hasPhoto) {
+      params.filter._and.push({ photo: { _nnull: true } });
+    }
+  }
+
+  if (params.filter && params.filter._and.length === 0) {
+    delete params.filter;
+  }
+
+  try {
+    const response = await axios.get(`${API_URL}/items/allContent`, {
+      params,
+    });
+
+    return {
+      data: response.data.data,
+      nextPage: response.data.data.length === limit ? pageParam + 1 : undefined,
+      totalItems: response.data.meta?.total_count || response.data.data.length,
+    };
+  } catch (error) {
+    console.error("Error fetching all content:", error);
+    throw error;
+  }
+};
+
+////////////////-------------------------------
+export const fetchCourseDetails = async (slug: string) => {
+  try {
+    // Fetch course details from allContent
+    const allContentResponse = await axios.get(`${API_URL}/items/allContent`, {
+      params: {
+        filter: {
+          slug: {
+            _eq: slug,
+          },
+        },
+        fields: ["id", "translations.*", "slug"],
+      },
+    });
+
+    const allContentData = allContentResponse.data.data[0];
+
+    // Fetch additional information from pages
+    const pagesResponse = await axios.get(`${API_URL}/items/pages`, {
+      params: {
+        filter: {
+          collection_slug: {
+            _eq: slug,
+          },
+        },
+        fields: ["id", "slug"],
+      },
+    });
+
+    const pagesData = pagesResponse.data.data[0];
+
+    // Merge data
+    const mergedData = {
+      ...allContentData,
+      pageDetails: pagesData,
+    };
+
+    return mergedData;
+  } catch (error) {
+    console.error("Error fetching course details:", error);
+    throw error;
+  }
+};
+/////////////////////////////////////////////////////
+
+export const searchAllContent = async (
+  searchQuery: string
+): Promise<AllContent[]> => {
+  if (searchQuery.length <= 2) return [];
+
+  const params = {
+    fields: [
+      "id",
+      "translations.*",
+      "category.id",
+      "category.translations.*",
+      "video",
+      "is_current",
+      "start_date",
+      "end_date",
+      "slug",
+    ],
+    filter: {
+      _or: [
+        { translations: { title: { _contains: searchQuery } } },
+        { translations: { description: { _contains: searchQuery } } },
+      ],
+    },
+    limit: 10,
+  };
+
+  try {
+    const response = await axios.get(`${API_URL}/items/allContent`, { params });
+    return response.data.data;
+  } catch (error) {
+    console.error("Error searching all content:", error);
+    throw error;
+  }
+};
+
+export const getCategoryName = async (
+  categoryId: string,
+  languageCode: string
+): Promise<string> => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/items/categories/${categoryId}`,
+      {
+        params: {
+          fields: ["translations.*"],
+        },
+      }
+    );
+    const category = response.data.data;
+    if (category && category.translations && category.translations.length > 0) {
+      const translation =
+        category.translations.find((t) => t.languages_code === languageCode) ||
+        category.translations[0];
+      return translation.title || "Untitled Category";
+    } else {
+      console.error(`No translation found for category ID: ${categoryId}`);
+      return "Untitled Category";
+    }
+  } catch (error) {
+    console.error(`Error fetching category name for ID ${categoryId}:`, error);
+    return "Error Loading Category";
+  }
+};

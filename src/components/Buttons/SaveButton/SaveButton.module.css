@@ -1,0 +1,22 @@
+.saveButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.saveButton:not(.saved) {
+  background-color: #e0e0e0;
+  color: #000;
+}
+
+.saveButton.saved {
+  background-color: #000;
+  color: #fff;
+}
+
+.saveButton:hover {
+  opacity: 0.8;
+}
