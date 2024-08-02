@@ -23,5 +23,9 @@
   "noSavedContent": "No saved content",
   "video": "Video",
   "actual": "Current",
-  "archive": "Archived"
+  "archive": "Archived",
+    "save": "Save",
+  "contains": "Contains",
+  "photo": "Photo",
+  "uncategorized": "Uncategorized"
 }

@@ -1,11 +1,11 @@
 import React from "react";
 import { useFilters } from "../../../../hooks/useFilters";
 import { useTranslation } from "react-i18next";
-import { Course } from "../../../../types";
+import { AllContent } from "../../../../types";
 import styles from "./AdditionalFilterMenu.module.css";
 
 interface AdditionalFilterMenuProps {
-  coursesData: { pages: { data: Course[] }[] } | undefined;
+  coursesData: { pages: { data: AllContent[] }[] } | undefined;
 }
 
 const AdditionalFilterMenu: React.FC<AdditionalFilterMenuProps> = ({

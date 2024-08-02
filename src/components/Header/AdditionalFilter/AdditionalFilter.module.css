@@ -1,16 +1,20 @@
 .additionalFilters {
   margin-bottom: 20px;
+  position: relative;
 }
 
 .dropdownToggle {
-  padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 5px;
+  background-color: transparent;
+  border: none;
+outline: none;
   cursor: pointer;
 }
 
 .dropdownContent {
+  color: #f0f0f0;
+position: absolute;
+z-index: 500;
   margin-top: 10px;
   padding: 10px;
   border: 1px solid #ccc;
@@ -22,25 +26,28 @@
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
+
+
 }
 
 .filterButton {
   padding: 5px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white;
+     background-color: transparent;
+  border: none;
+outline: none;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .filterButtonActive {
-  background-color: #e0e0e0;
-  border-color: #999;
+   background-color: transparent;
+  border: none;
 }
 
 .filterButtonDisabled {
   opacity: 0.5;
   cursor: not-allowed;
+  color: grey;
 }
 
 .clearFilters {

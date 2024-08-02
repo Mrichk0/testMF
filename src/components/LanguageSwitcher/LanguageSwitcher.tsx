@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next";
 
+import styles from "./LanguageSwitcher.module.css";
+
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
 
@@ -9,7 +11,7 @@ const LanguageSwitcher = () => {
   };
 
   return (
-    <button onClick={toggleLanguage}>
+    <button onClick={toggleLanguage} className={styles.btn}>
       {i18n.language === "uk" ? "EN" : "UK"}
     </button>
   );

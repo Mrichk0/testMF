@@ -1,22 +1,16 @@
-/* .categories {
-  
-} */
-
-.inMenu {
- 
-  color: white;
-}
-
-.categoryGroup {
-  margin-bottom: 15px;
+.categories {
+  display: flex;
+  align-items: center;
 }
 
 .categoryButton {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px 0;
+  padding: 5px 5px;
   text-align: left;
+  margin-right: 20px;
+  
 }
 
 .inMenu .categoryButton {
@@ -48,5 +42,16 @@
 .mainCategories {
   list-style-type: none;
   padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
+/* New styles for active categories and subcategories */
+.categoryButtonActive {
+  color: grey;
+}
+
+.subcategoryButtonActive {
+  color: grey;
+}

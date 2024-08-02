@@ -1,0 +1,18 @@
+.courseDetailsList {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.courseDetailsItem {
+  color: #aaa;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.courseDetailsItem:last-child {
+  margin-right: 0;
+}

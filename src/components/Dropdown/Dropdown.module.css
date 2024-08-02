@@ -1,19 +1,4 @@
-.searchInputContainer {
-  /* position: relative; */
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.searchInput {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.dropdownResults {
+.dropdown {
   position: absolute;
   top: 100%;
   left: 0;
@@ -27,14 +12,41 @@
   z-index: 1000;
 }
 
-.categoryGroup {
+.dropdownHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #444;
+  border-bottom: 1px solid #555;
+}
+
+.dropdownHeader h3 {
+  color: #fff;
+  margin: 0;
+  font-size: 18px;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.dropdownContent {
   padding: 10px;
 }
 
-.categoryName {
+.categoryGroup {
+  margin-bottom: 15px;
+}
+
+.categoryTitle {
   color: #fff;
-  font-size: 18px;
-  margin-bottom: 10px;
+  font-size: 16px;
+  margin: 0 0 10px 0;
 }
 
 .contentItem {
@@ -59,18 +71,29 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .courseDetailsItem {
   color: #aaa;
   font-size: 14px;
+  margin-right: 15px;
   margin-bottom: 5px;
 }
 
-.loadingMessage,
-.errorMessage,
-.noResults {
-  color: #fff;
-  padding: 10px;
-  text-align: center;
+.removeButton {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 18px;
+  float: right;
+  cursor: pointer;
+  padding: 0 5px;
 }
+
+.removeButton:hover {
+  color: #fff;
+}
+
+

@@ -32,7 +32,7 @@ export const useFilters = () => {
   );
 
   const handleActualChange = useCallback(
-    (value: boolean) => {
+    (value: boolean | null) => {
       setFilters((prev) => ({
         ...prev,
         isActual: prev.isActual === value ? null : value,

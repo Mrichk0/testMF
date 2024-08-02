@@ -1,17 +1,24 @@
 import React, { useState, useMemo } from "react";
-import { useFilters } from "../../../hooks/useFilters";
 import { useTranslation } from "react-i18next";
-import { Course } from "../../../types";
+import { Filters, AllContent } from "../../../types";
 import styles from "./AdditionalFilter.module.css";
 
 interface AdditionalFilterProps {
-  coursesData: { pages: { data: Course[] }[] } | undefined;
+  filters: Filters;
+  handleFilterChange: (filterName: keyof Filters) => void;
+  handleActualChange: (value: boolean | null) => void;
+  clearAllFilters: () => void;
+  coursesData: { pages: { data: AllContent[] }[] } | undefined;
 }
 
-const AdditionalFilter: React.FC<AdditionalFilterProps> = ({ coursesData }) => {
+const AdditionalFilter: React.FC<AdditionalFilterProps> = ({
+  filters,
+  handleFilterChange,
+  handleActualChange,
+  clearAllFilters,
+  coursesData,
+}) => {
   const { t } = useTranslation();
-  const { filters, handleFilterChange, handleActualChange, clearAllFilters } =
-    useFilters();
   const [isOpen, setIsOpen] = useState(false);
 
   const availableFilters = useMemo(() => {
@@ -21,6 +28,7 @@ const AdditionalFilter: React.FC<AdditionalFilterProps> = ({ coursesData }) => {
         hasAudio: false,
         hasPhoto: false,
         hasActual: false,
+        hasNotActual: false,
       };
 
     const filterAvailability = {
@@ -28,15 +36,23 @@ const AdditionalFilter: React.FC<AdditionalFilterProps> = ({ coursesData }) => {
       hasAudio: false,
       hasPhoto: false,
       hasActual: false,
+      hasNotActual: false,
     };
+
+    const now = new Date();
 
     coursesData.pages.forEach((page) => {
       page.data.forEach((course) => {
         if (course.video) filterAvailability.hasVideo = true;
         if (course.audio) filterAvailability.hasAudio = true;
         if (course.photo) filterAvailability.hasPhoto = true;
-        if (course.is_current !== undefined)
+
+        const endDate = new Date(course.end_date);
+        if (endDate >= now) {
           filterAvailability.hasActual = true;
+        } else {
+          filterAvailability.hasNotActual = true;
+        }
       });
     });
 
@@ -49,7 +65,7 @@ const AdditionalFilter: React.FC<AdditionalFilterProps> = ({ coursesData }) => {
         onClick={() => setIsOpen(!isOpen)}
         className={styles.dropdownToggle}
       >
-        {t("additionalFilters")}
+        ˭
       </button>
       {isOpen && (
         <div className={styles.dropdownContent}>
@@ -105,15 +121,17 @@ const AdditionalFilter: React.FC<AdditionalFilterProps> = ({ coursesData }) => {
               className={`${styles.filterButton} 
                 ${filters.isActual === false ? styles.filterButtonActive : ""} 
                 ${
-                  !availableFilters.hasActual ? styles.filterButtonDisabled : ""
+                  !availableFilters.hasNotActual
+                    ? styles.filterButtonDisabled
+                    : ""
                 }`}
-              disabled={!availableFilters.hasActual}
+              disabled={!availableFilters.hasNotActual}
             >
               {t("notActual")}
             </button>
           </div>
           <button onClick={clearAllFilters} className={styles.clearFilters}>
-            {t("clearAllFilters")}
+            {t("clear")}
           </button>
         </div>
       )}

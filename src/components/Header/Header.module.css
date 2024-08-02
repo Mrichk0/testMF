@@ -1,15 +1,24 @@
-/* .header {
-  display: flex;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: #ffffff;
+.header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 600;
+  background-color: #f8f8f8f0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-} */
+  width: 900px;
+}
 
 .leftSection {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.dropdownSection {
+  position: relative;
+  width: 70%;
+  display: flex;
 }
 
 .menuButton {
@@ -24,5 +33,3 @@
 .menuButton:hover {
   background-color: #f0f0f0;
 }
-
-/* Add any additional styling as needed */

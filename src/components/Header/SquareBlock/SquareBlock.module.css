@@ -1,10 +1,12 @@
 .squareBlock {
   width: 40px;
   height: 40px;
-  background-color: blue;
+  background-color: rgba(0, 0, 255, 0.817);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: absolute;
+  left: -44px;
 
 }
 

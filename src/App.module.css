@@ -41,7 +41,7 @@
   color: #888;
 }
 
-.header{
+.headerWrapper{
   display: flex;
   justify-content: space-between;
 }

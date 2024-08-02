@@ -1,15 +1,21 @@
 .yearsList {
+  position: fixed;
+  right: 0;
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
 }
 
 .yearButton {
   padding: 5px 10px;
-  border: 1px solid gray;
+  border: none;
   border-radius: 5px;
-  background: white;
+  background: transparent;
   cursor: pointer;
   transition: all 0.3s ease;
 }
