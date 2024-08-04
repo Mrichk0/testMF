@@ -1,6 +1,11 @@
 export interface Category {
   id: string;
   category_name: string;
+  slug: string;
+  translations: {
+    languages_code: string;
+    category_name: string;
+  }[];
 }
 
 export interface Subcategory {

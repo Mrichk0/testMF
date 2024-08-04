@@ -1,51 +1,30 @@
-// import React from "react";
-// import { Route, Routes } from "react-router-dom";
-// import Header from "./components/Header/Header";
-
-// import LanguageSwitcher from "./components/LanguageSwitcher/LanguageSwitcher";
-
-// import styles from "./App.module.css";
-// import DetailsPage from "./pages/DetailsPage";
-// import AllContentList from "./components/AllContent/AllContentList/AllContentList";
-
-// const App: React.FC = () => {
-//   return (
-//     <div className="app">
-//       <div className={styles.headerWrapper}>
-//         <Header />
-//         <LanguageSwitcher />
-//       </div>
-//       <Routes>
-//         <Route path="/" element={<AllContentList />} />
-//         <Route path="/course/:slug" element={<DetailsPage />} />
-//       </Routes>
-//     </div>
-//   );
-// };
-
-// export default App;
-
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 
 import Header from "./components/Header/Header";
-import LanguageSwitcher from "./components/LanguageSwitcher/LanguageSwitcher";
-import styles from "./App.module.css";
-import DetailsPage from "./pages/DetailsPage";
 import AllContentList from "./components/AllContent/AllContentList/AllContentList";
+import DictionaryPage from "./pages/DictionaryPage";
+import DetailsPage from "./pages/DetailsPage/DetailsPage";
 import { CategoryProvider } from "./components/Header/Categories/CategoryContext";
+import LanguageSwitcher from "./components/LanguageSwitcher/LanguageSwitcher";
+
+const DetailsPageWrapper: React.FC = () => {
+  const { categorySlug, slug } = useParams();
+
+  return <DetailsPage categorySlug={categorySlug} />;
+};
 
 const App: React.FC = () => {
   return (
     <CategoryProvider>
       <div className="app">
-        <div className={styles.headerWrapper}>
-          <Header />
-          <LanguageSwitcher />
-        </div>
+        <Header />
+        <LanguageSwitcher />
         <Routes>
           <Route path="/" element={<AllContentList />} />
-          <Route path="/course/:slug" element={<DetailsPage />} />
+          <Route path="/:categorySlug" element={<AllContentList />} />
+          <Route path="/:categorySlug/:slug" element={<DetailsPageWrapper />} />
+          <Route path="/dictionary" element={<DictionaryPage />} />
         </Routes>
       </div>
     </CategoryProvider>

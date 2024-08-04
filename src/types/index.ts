@@ -12,7 +12,10 @@ export interface AllContent {
     id: string;
     sort: number;
     slug: string;
-    translations: number[];
+    translations: {
+      languages_code: string;
+      category_name: string;
+    }[];
   };
   audio: any | null;
   video: any | null;

@@ -1,15 +1,28 @@
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+
+import { useCategories } from "./useCategories";
 import { useCategory } from "../components/Header/Categories/CategoryContext";
 
-export const usePageCategory = (categoryId: string | null) => {
-  const { setSelectedCategory } = useCategory();
+export const usePageCategory = () => {
+  const { categorySlug } = useParams<{ categorySlug?: string }>();
+  const { selectedCategory, setSelectedCategory } = useCategory();
+  const { data: categoriesData } = useCategories();
 
   useEffect(() => {
-    setSelectedCategory(categoryId);
-
-    // Cleanup function to reset the category when the component unmounts
-    return () => {
+    if (categorySlug && categoriesData) {
+      const category = categoriesData.categories.find(
+        (cat) => cat.slug === categorySlug
+      );
+      if (category) {
+        setSelectedCategory(category.id);
+      } else {
+        setSelectedCategory(null);
+      }
+    } else if (!categorySlug) {
       setSelectedCategory(null);
-    };
-  }, [categoryId, setSelectedCategory]);
+    }
+  }, [categorySlug, categoriesData, setSelectedCategory]);
+
+  return { selectedCategory, setSelectedCategory };
 };

@@ -7,7 +7,6 @@ export const useFilters = () => {
     hasVideo: false,
     hasAudio: false,
     hasPhoto: false,
-    isActual: null,
   });
 
   const [selectedCategory, setSelectedCategory] = useLocalStorage<
@@ -23,20 +22,28 @@ export const useFilters = () => {
 
   const handleFilterChange = useCallback(
     (filterName: keyof Filters) => {
-      setFilters((prev) => ({
-        ...prev,
-        [filterName]: !prev[filterName],
-      }));
+      setFilters((prev) => {
+        const newFilters = {
+          ...prev,
+          [filterName]: !prev[filterName],
+        };
+
+        return newFilters;
+      });
     },
     [setFilters]
   );
 
   const handleActualChange = useCallback(
     (value: boolean | null) => {
-      setFilters((prev) => ({
-        ...prev,
-        isActual: prev.isActual === value ? null : value,
-      }));
+      setFilters((prev) => {
+        const newFilters = {
+          ...prev,
+          isActual: prev.isActual === value ? null : value,
+        };
+
+        return newFilters;
+      });
     },
     [setFilters]
   );
@@ -46,11 +53,11 @@ export const useFilters = () => {
       hasVideo: false,
       hasAudio: false,
       hasPhoto: false,
-      isActual: null,
     });
     setSelectedCategory(null);
     setSelectedSubcategories([]);
     setSelectedYear(null);
+    console.log("All filters cleared");
   }, [
     setFilters,
     setSelectedCategory,
@@ -65,9 +72,15 @@ export const useFilters = () => {
     selectedYear,
     handleFilterChange,
     handleActualChange,
-    setSelectedCategory,
-    setSelectedSubcategories,
-    setSelectedYear,
+    setSelectedCategory: (category: string | null) => {
+      setSelectedCategory(category);
+    },
+    setSelectedSubcategories: (subcategories: string[]) => {
+      setSelectedSubcategories(subcategories);
+    },
+    setSelectedYear: (year: number | null) => {
+      setSelectedYear(year);
+    },
     clearAllFilters,
   };
 };

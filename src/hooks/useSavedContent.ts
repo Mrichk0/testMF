@@ -1,29 +1,34 @@
 import { useState, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import axios from "axios";
-import { AllContent } from "../types";
 
-const API_URL = "http://0.0.0.0:8055"; // Replace with your actual Directus API URL
+const API_URL = "http://0.0.0.0:8055";
 
 export const useSavedContent = () => {
   const [savedContentIds, setSavedContentIds] = useLocalStorage<number[]>(
     "savedContentIds",
     []
   );
-  const [savedContent, setSavedContent] = useState<AllContent[]>([]);
+  const [savedContent, setSavedContent] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const addSavedContent = (content: AllContent) => {
+  const addSavedContent = (content: any) => {
+    if (!content || typeof content.id === "undefined") {
+      console.error("Invalid content object:", content);
+      return;
+    }
     setSavedContentIds((prev) => {
       if (!prev.includes(content.id)) {
         return [...prev, content.id];
       }
       return prev;
     });
+    setSavedContent((prev) => [...prev, content]);
   };
 
   const removeSavedContent = (id: number) => {
     setSavedContentIds((prev) => prev.filter((contentId) => contentId !== id));
+    setSavedContent((prev) => prev.filter((content) => content.id !== id));
   };
 
   useEffect(() => {

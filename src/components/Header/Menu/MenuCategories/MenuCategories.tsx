@@ -159,13 +159,14 @@
 // export default MenuCategories;
 
 import React, { useMemo } from "react";
-import { useCategories } from "../../../../hooks/useCategories";
+
 import { useFilters } from "../../../../hooks/useFilters";
 import { useTranslation } from "react-i18next";
 import { useTranslatedContent } from "../../../../hooks/useTranslatedContent";
 import { useAllContent } from "../../../../hooks/useAllContent";
 import styles from "./MenuCategories.module.css";
 import { AllContent } from "../../../../types";
+import { useCategories } from "../../../../hooks/useCategories";
 
 const MenuCategories: React.FC = () => {
   const { t } = useTranslation();
