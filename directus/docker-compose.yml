@@ -1,0 +1,21 @@
+version: "3"
+services:
+  directus:
+    image: directus/directus:11.0.0
+    ports:
+       - 8055:8055
+    volumes:
+      - ./database:/directus/database
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+    environment:
+      SECRET: "af0048f7487dc9a26bcfc90c23efc4fd20a90949681d32c20f0e0ce9d6c3298aade61905361fb937429c6729d74be62d56ec3896ff9f8e1cf242ec16ddc98a42"
+      ADMIN_EMAIL: "nuxt@ukr.net"
+      ADMIN_PASSWORD: "zaq47zaq47"
+      DB_CLIENT: "sqlite3"
+      DB_FILENAME: "/directus/database/data.db"
+      WEBSOCKETS_ENABLED: "true"
+      CORS_ENABLED: "true" 
+      CORS_ORIGIN: "true"
+     
+    
