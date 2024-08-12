@@ -1,5 +1,5 @@
 import InterfaceComponent from "./interface.vue";
-console.log(InterfaceComponent);
+
 export default {
   id: "grid",
   name: "Grid",
