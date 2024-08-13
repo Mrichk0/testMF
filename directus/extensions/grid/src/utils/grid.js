@@ -3,7 +3,7 @@ import { reactive, computed, onMounted, onUnmounted } from "vue";
 export default function setupGrid({ $el }) {
   const grid = reactive({
     $el,
-    cols: 3,
+    cols: 4,
     rows: 4,
     width: 0,
     ratio: 0.64,

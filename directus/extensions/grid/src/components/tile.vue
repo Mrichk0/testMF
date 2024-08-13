@@ -1,5 +1,116 @@
+<template>
+  <div
+    class="tile"
+    :style="tile.style"
+    :class="[
+      className,
+      { 'tile--error': tile.error, 'tile--translated': hasTranslationText },
+    ]"
+    @mouseenter="emit('enter')"
+    @mouseleave="emit('leave')"
+  >
+    <img v-if="tile.image" :src="`/assets/${tile.image}`" />
+    <div v-if="hasTranslationText" class="text">
+      {{ tile.translations.create[0].text }}
+    </div>
+    <iframe
+      v-if="tile.type === 'video'"
+      :src="'https://www.youtube.com/embed/' + getYouTubeId(tile.video_url)"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+
+    <div class="tile-frame">
+      <a v-for="n in 8" @mousedown="resize($event, n)" />
+    </div>
+    <div class="tile-nav">
+      <v-button
+        v-tooltip="'Edit'"
+        icon
+        rounded
+        @click="emit('edit')"
+        class="custom-button"
+      >
+        <v-icon name="edit" class="custom-icon" />
+      </v-button>
+      <v-button
+        v-tooltip="'Move'"
+        icon
+        rounded
+        @mousedown="move"
+        class="custom-button"
+      >
+        <v-icon name="drag_handle" class="custom-icon" />
+      </v-button>
+      <v-button
+        v-tooltip="'Delete'"
+        icon
+        rounded
+        @click="emit('remove')"
+        class="custom-button"
+      >
+        <v-icon name="close" class="custom-icon" />
+      </v-button>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { computed } from "vue";
+
+const props = defineProps(["tile"]);
+
+console.log(props.tile);
+
+const emits = defineEmits(["enter", "leave", "start", "remove", "edit"]);
+
+const className = computed(() => {
+  const cls = props.tile.class;
+  if (!cls) return "tile--inactive";
+  if (cls.startsWith("resize")) return "tile--resize";
+  return `tile--${cls}`;
+});
+function getYouTubeId(url) {
+  if (typeof url !== "string") return null;
+  const regex =
+    /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}
+
+const hasTranslationText = computed(() => {
+  return (
+    props.tile.translations &&
+    props.tile.translations.create &&
+    props.tile.translations.create.length > 0 &&
+    props.tile.translations.create[0].text
+  );
+});
+
+function emit(...args) {
+  emits(...args, props.tile);
+}
+
+function resize(event, n) {
+  emit("start", event, `resize-${n}`);
+}
+
+function move(event) {
+  emit("start", event, "move");
+}
+</script>
+
 <style scoped>
 /* root */
+
+.tile--translated {
+  padding: 10px;
+  background-color: #fff;
+  overflow: hidden;
+
+  z-index: 1;
+}
 
 .tile {
   position: absolute;
@@ -18,7 +129,7 @@
 
 .tile-frame {
   position: absolute;
-  inset: 6px;
+  inset: 2px;
   border: 1px solid var(--primary);
   background: rgba(38, 50, 56, 0.2);
 }
@@ -141,74 +252,3 @@
   color: #000;
 }
 </style>
-
-<template>
-  <div
-    class="tile"
-    :style="tile.style"
-    :class="[className, { 'tile--error': tile.error }]"
-    @mouseenter="emit('enter')"
-    @mouseleave="emit('leave')"
-  >
-    <img v-if="tile.image" :src="`/assets/${tile.image}`" />
-    <div class="tile-frame">
-      <a v-for="n in 8" @mousedown="resize($event, n)" />
-    </div>
-    <div class="tile-nav">
-      <v-button
-        v-tooltip="'Edit'"
-        icon
-        rounded
-        @click="emit('edit')"
-        class="custom-button"
-      >
-        <v-icon name="edit" class="custom-icon" />
-      </v-button>
-      <v-button
-        v-tooltip="'Move'"
-        icon
-        rounded
-        @mousedown="move"
-        class="custom-button"
-      >
-        <v-icon name="drag_handle" class="custom-icon" />
-      </v-button>
-      <v-button
-        v-tooltip="'Delete'"
-        icon
-        rounded
-        @click="emit('remove')"
-        class="custom-button"
-      >
-        <v-icon name="close" class="custom-icon" />
-      </v-button>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { computed } from "vue";
-
-const props = defineProps(["tile"]);
-
-const emits = defineEmits(["enter", "leave", "start", "remove", "edit"]);
-
-const className = computed(() => {
-  const cls = props.tile.class;
-  if (!cls) return "tile--inactive";
-  if (cls.startsWith("resize")) return "tile--resize";
-  return `tile--${cls}`;
-});
-
-function emit(...args) {
-  emits(...args, props.tile);
-}
-
-function resize(event, n) {
-  emit("start", event, `resize-${n}`);
-}
-
-function move(event) {
-  emit("start", event, "move");
-}
-</script>
