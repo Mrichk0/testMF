@@ -4,22 +4,28 @@
     :style="tile.style"
     :class="[
       className,
-      { 'tile--error': tile.error, 'tile--translated': hasTranslationText },
+      {
+        'tile--error': tile.error,
+        'tile--translated': hasTranslationText,
+        'iframe-wrapper': hasVideo,
+      },
     ]"
     @mouseenter="emit('enter')"
     @mouseleave="emit('leave')"
   >
     <img v-if="tile.image" :src="`/assets/${tile.image}`" />
+
     <div v-if="hasTranslationText" class="text">
       {{ tile.translations.create[0].text }}
     </div>
-    <iframe
-      v-if="tile.type === 'video'"
-      :src="'https://www.youtube.com/embed/' + getYouTubeId(tile.video_url)"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen
-    ></iframe>
+    <div v-if="tile.type === 'video'" class="video-tile">
+      <iframe
+        :src="'https://www.youtube.com/embed/' + getYouTubeId(tile.video_url)"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
 
     <div class="tile-frame">
       <a v-for="n in 8" @mousedown="resize($event, n)" />
@@ -79,6 +85,10 @@ function getYouTubeId(url) {
   return match ? match[1] : null;
 }
 
+const hasVideo = computed(() => {
+  return props.tile.type === "video";
+});
+
 const hasTranslationText = computed(() => {
   return (
     props.tile.translations &&
@@ -102,6 +112,30 @@ function move(event) {
 </script>
 
 <style scoped>
+/* iframe */
+.iframe-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  overflow: hidden;
+}
+
+.iframe-wrapper iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Адаптивні стилі */
+@media (max-width: 768px) {
+  .iframe-wrapper {
+    padding-bottom: 75%; /* 4:3 Aspect Ratio для мобільних пристроїв */
+  }
+}
 /* root */
 
 .tile--translated {
