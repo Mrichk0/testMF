@@ -1,4 +1,4 @@
-import { reactive, computed, watch } from "vue";
+import { reactive, computed, watch, toRaw } from "vue";
 import { useApi } from "@directus/extensions-sdk";
 
 export default function setupTiles({ grid, props, emit, relation }) {
@@ -25,6 +25,7 @@ export default function setupTiles({ grid, props, emit, relation }) {
   function getData(tile) {
     return relation.fields.reduce((data, field) => {
       data[field] = tile[field];
+
       return data;
     }, {});
   }
@@ -54,9 +55,11 @@ export default function setupTiles({ grid, props, emit, relation }) {
 
   function add(item) {
     const tile = reactive({ ...item });
+
     tile.origin = item;
     tile.style = getStyle(tile);
     tile.edits = getEdits(tile);
+
     state.list.push(tile);
     return tile;
   }
@@ -88,8 +91,35 @@ export default function setupTiles({ grid, props, emit, relation }) {
   watch(
     () => props.value,
     (value) => {
-      // Logic for updating tiles based on props.value
-      // ...
+      if (!Array.isArray(value) || value.length === 0) return;
+
+      if (value === state.initial) return;
+      if (JSON.stringify(toRaw(value)) === JSON.stringify(output.value)) return;
+
+      const filter = { id: { _in: value } };
+      const params = { fields: [relation.fields, "translations.*"], filter };
+
+      api
+        .get(`/items/${relation.collection}`, { params })
+        .then((response) => {
+          const data = response.data.data;
+          state.list = [];
+          const itemMap = new Map(data.map((item) => [item.id, item]));
+
+          value.forEach((id) => {
+            const foundItem = itemMap.get(id);
+            if (foundItem) {
+              add(foundItem);
+            } else {
+              console.warn(
+                `Element with ${id} not found in collection ${relation.collection}`
+              );
+            }
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching data from API:", error);
+        });
     },
     { immediate: true }
   );

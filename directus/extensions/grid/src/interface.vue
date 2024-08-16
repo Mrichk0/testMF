@@ -92,6 +92,7 @@ export default defineComponent({
       if (event.target !== $el.value) return;
       const cell = grid.getCell(event);
       const tile = tiles.add(cell);
+ 
       start(event, "add", tile);
     }
 

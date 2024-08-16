@@ -15,8 +15,12 @@
   >
     <img v-if="tile.image" :src="`/assets/${tile.image}`" />
 
-    <div v-if="hasTranslationText" class="text">
-      {{ tile.translations.create[0].text }}
+    <div v-if="tile.type === 'text'" class="text">
+      {{
+        tile.translations?.[0]?.text ||
+        tile.translations?.create?.[0]?.text ||
+        ""
+      }}
     </div>
     <div v-if="tile.type === 'video'" class="video-tile">
       <iframe
@@ -67,7 +71,8 @@ import { computed } from "vue";
 
 const props = defineProps(["tile"]);
 
-console.log(props.tile);
+console.log("Props TILE From Tile.vue", props.tile);
+console.log("Props tile From Tile.vue", props);
 
 const emits = defineEmits(["enter", "leave", "start", "remove", "edit"]);
 
@@ -90,12 +95,7 @@ const hasVideo = computed(() => {
 });
 
 const hasTranslationText = computed(() => {
-  return (
-    props.tile.translations &&
-    props.tile.translations.create &&
-    props.tile.translations.create.length > 0 &&
-    props.tile.translations.create[0].text
-  );
+  return props.tile.type === "text";
 });
 
 function emit(...args) {
