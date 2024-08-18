@@ -233,7 +233,6 @@ const Dropdown: React.FC<DropdownProps> = ({
   }, [items, groupByCategory, t, title]);
 
   const handleItemClick = (item: AllContent) => {
-    console.log("Item clicked:", item);
     const categorySlug = item.category?.slug || "uncategorized";
     const itemSlug = item.slug;
     const path = `/${categorySlug}/${itemSlug}`;

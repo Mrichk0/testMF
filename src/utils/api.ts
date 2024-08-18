@@ -20,8 +20,6 @@ export const getSubcategoryTranslations = async (
       },
     });
 
-    console.log("Subcategory translations response:", response.data);
-
     if (response.data.data && response.data.data.length > 0) {
       const subcategory = response.data.data[0];
       return subcategory.translations.map((translation: any) => ({
@@ -60,11 +58,6 @@ export const fetchCategoriesAndCourses = async (): Promise<{
         },
       }),
     ]);
-
-    console.log("API responses:", {
-      categories: categoriesResponse.data,
-      subcategories: subcategoriesResponse.data,
-    });
 
     return {
       categories: categoriesResponse.data.data,
@@ -195,7 +188,7 @@ export const fetchFilteredAllContent = async ({
 
 export const fetchAllContentDetails = async (slug: string) => {
   try {
-    const allContentResponse = await axios.get(`${API_URL}/items/allContent`, {
+    const pagesResponse = await axios.get(`${API_URL}/items/pages`, {
       params: {
         filter: {
           slug: {
@@ -203,36 +196,20 @@ export const fetchAllContentDetails = async (slug: string) => {
           },
         },
         fields: [
-          "id",
-          "translations.*",
           "slug",
-          "category.id",
-          "category.translations.*",
+          "status",
+          "date_created",
+          "date_updated",
+          "translations.*", // Fetch page translations
+          "template.*", // Fetch all template fields
+          "template.translations.*", // Fetch the template translations
         ],
-      },
-    });
-
-    const allContentData = allContentResponse.data.data[0];
-
-    const pagesResponse = await axios.get(`${API_URL}/items/pages`, {
-      params: {
-        filter: {
-          collection_slug: {
-            _eq: slug,
-          },
-        },
-        fields: ["id", "slug"],
       },
     });
 
     const pagesData = pagesResponse.data.data[0];
 
-    const mergedData = {
-      ...allContentData,
-      pageDetails: pagesData,
-    };
-
-    return mergedData;
+    return pagesData;
   } catch (error) {
     console.error("Error fetching course details:", error);
     throw error;
@@ -256,7 +233,6 @@ export const searchAllContent = async (
       "subcategories.subcategories_id",
       "subcategories.translations.*",
       "video",
-      "is_current",
       "start_date",
       "end_date",
       "slug",

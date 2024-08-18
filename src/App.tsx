@@ -11,7 +11,7 @@ import LanguageSwitcher from "./components/LanguageSwitcher/LanguageSwitcher";
 const DetailsPageWrapper: React.FC = () => {
   const { categorySlug, slug } = useParams();
 
-  return <DetailsPage categorySlug={categorySlug} />;
+  return <DetailsPage categorySlug={categorySlug} slug={slug} />;
 };
 
 const App: React.FC = () => {

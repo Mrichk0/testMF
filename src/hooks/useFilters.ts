@@ -57,7 +57,6 @@ export const useFilters = () => {
     setSelectedCategory(null);
     setSelectedSubcategories([]);
     setSelectedYear(null);
-    console.log("All filters cleared");
   }, [
     setFilters,
     setSelectedCategory,

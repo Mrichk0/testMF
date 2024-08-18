@@ -429,29 +429,24 @@ const AllContentList: React.FC = () => {
   );
 
   const memoizedAllContentItems = useMemo(() => {
-    return allContentList.map(
-      (content) => (
-        console.log("content List", content),
-        (
-          <AllContentItem
-            key={content.id}
-            title={getTranslation(content.translations, "title")}
-            description={getTranslation(content.translations, "description")}
-            categoryInfo={categoryInfos[content.id] || t("loading")}
-            dateRange={formatDateRange(content.start_date, content.end_date)}
-            contentInfo={getContentInfo(content)}
-            isCurrent={content.is_current}
-            photoUrl={
-              content.photo
-                ? `http://0.0.0.0:8055/assets/${content.photo.id}`
-                : undefined
-            }
-            onProgramClick={() => handleProgramClick(content)}
-            saveButton={<SaveContentButton content={content} />}
-          />
-        )
-      )
-    );
+    return allContentList.map((content) => (
+      <AllContentItem
+        key={content.id}
+        title={getTranslation(content.translations, "title")}
+        description={getTranslation(content.translations, "description")}
+        categoryInfo={categoryInfos[content.id] || t("loading")}
+        dateRange={formatDateRange(content.start_date, content.end_date)}
+        contentInfo={getContentInfo(content)}
+        isCurrent={content.is_current}
+        photoUrl={
+          content.photo
+            ? `http://0.0.0.0:8055/assets/${content.photo.id}`
+            : undefined
+        }
+        onProgramClick={() => handleProgramClick(content)}
+        saveButton={<SaveContentButton content={content} />}
+      />
+    ));
   }, [
     allContentList,
     getTranslation,

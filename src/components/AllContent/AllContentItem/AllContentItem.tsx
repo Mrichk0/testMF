@@ -95,6 +95,8 @@ const AllContentItem: React.FC<AllContentItemProps> = memo(
   }) => {
     const { t } = useTranslation();
 
+    console.log("Photo URL from AllContentItem:", photoUrl);
+
     return (
       <div className="course-item">
         <h2 className="course-title">{title}</h2>

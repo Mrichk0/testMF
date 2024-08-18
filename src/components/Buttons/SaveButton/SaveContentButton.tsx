@@ -15,11 +15,7 @@ const SaveContentButton: React.FC<SaveContentButtonProps> = ({
   const { addSavedContent, removeSavedContent, savedContent } =
     useSavedContent();
 
-  console.log("content", content);
-
   const contentId = content?.id;
-
-  console.log("contentId", contentId);
 
   const isSaved = savedContent.some((saved) => saved.id === contentId);
 
