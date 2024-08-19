@@ -36,7 +36,7 @@ export const useFilters = () => {
 
   const handleActualChange = useCallback(
     (value: boolean | null) => {
-      setFilters((prev) => {
+      setFilters((prev: any) => {
         const newFilters = {
           ...prev,
           isActual: prev.isActual === value ? null : value,

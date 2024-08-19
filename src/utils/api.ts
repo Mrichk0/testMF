@@ -200,9 +200,9 @@ export const fetchAllContentDetails = async (slug: string) => {
           "status",
           "date_created",
           "date_updated",
-          "translations.*", // Fetch page translations
-          "template.*", // Fetch all template fields
-          "template.translations.*", // Fetch the template translations
+          "translations.*",
+          "template.*",
+          "template.translations.*",
         ],
       },
     });

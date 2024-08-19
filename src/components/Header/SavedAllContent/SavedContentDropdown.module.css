@@ -71,30 +71,3 @@
   text-align: center;
 }
 
-
-/* .savedContentDropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.savedContentButton {
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 10px;
-}
-
-.dropdownWrapper {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  z-index: 1000;
-  min-width: 200px;
-}
-
-.errorMessage {
-  color: red;
-  margin-top: 5px;
-} */

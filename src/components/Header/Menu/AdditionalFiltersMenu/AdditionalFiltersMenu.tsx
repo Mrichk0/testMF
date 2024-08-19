@@ -1,6 +1,6 @@
 import React from "react";
-import { useFilters } from "../../../../hooks/useFilters";
 import { useTranslation } from "react-i18next";
+import { useFilters } from "../../../../hooks/useFilters";
 import { AllContent } from "../../../../types";
 import styles from "./AdditionalFilterMenu.module.css";
 

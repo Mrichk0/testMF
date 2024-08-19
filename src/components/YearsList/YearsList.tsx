@@ -20,9 +20,9 @@ const YearsList: React.FC = () => {
 
   const handleYearSelect = useCallback(
     (year: number) => {
-      setSelectedYear((prevYear) => (prevYear === year ? null : year));
+      setSelectedYear(selectedYear === year ? null : year);
     },
-    [setSelectedYear]
+    [selectedYear, setSelectedYear]
   );
 
   const availableYears = useMemo(() => {

@@ -1,12 +1,5 @@
-import Grid from "../components/Grid/Grid";
-
 function DictionaryPage() {
-  return (
-    <div>
-      DictionaryPage
-      <Grid />
-    </div>
-  );
+  return <div>DictionaryPage</div>;
 }
 
 export default DictionaryPage;

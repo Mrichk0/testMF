@@ -8,18 +8,18 @@ import { useTranslatedContent } from "../../../hooks/useTranslatedContent";
 import { CategoriesData, SubcategoryCategory } from "../../../types/categories";
 import AdditionalFilter from "../AdditionalFilter/AdditionalFilter";
 import styles from "./Categories.module.css";
-import { useCategory } from "./CategoryContext";
 
 const Categories: React.FC = () => {
   const { t } = useTranslation();
   const { data: categoriesData, isLoading, isError, error } = useCategories();
-  const { selectedCategory, setSelectedCategory } = useCategory();
   const {
     filters,
+    selectedCategory,
     selectedSubcategories,
     selectedYear,
     handleFilterChange,
     handleActualChange,
+    setSelectedCategory,
     setSelectedSubcategories,
     clearAllFilters,
   } = useFilters();
@@ -33,7 +33,7 @@ const Categories: React.FC = () => {
 
   const navigate = useNavigate();
 
-  if (isLoading) return <div>Loading categories...</div>;
+  // if (isLoading) return <div>Loading categories...</div>;
   if (isError)
     return <div>Error loading categories: {(error as Error).message}</div>;
   if (!categoriesData) return <div>No categories data available</div>;
@@ -41,23 +41,21 @@ const Categories: React.FC = () => {
   const typedCategoriesData = categoriesData as CategoriesData;
 
   const handleCategoryClick = (categoryId: string, categorySlug: string) => {
-    setSelectedCategory((prev) => {
-      const newCategory = prev === categoryId ? null : categoryId;
-      if (newCategory) {
-        navigate(`/${categorySlug}`);
-      } else {
-        navigate("/");
-      }
-      return newCategory;
-    });
+    const newCategory = selectedCategory === categoryId ? null : categoryId;
+    setSelectedCategory(newCategory);
+    if (newCategory) {
+      navigate(`/${categorySlug}`);
+    } else {
+      navigate("/");
+    }
     setSelectedSubcategories([]);
   };
 
   const handleSubcategoryClick = (subcategoryId: string) => {
-    setSelectedSubcategories((prev) =>
-      prev.includes(subcategoryId)
-        ? prev.filter((id) => id !== subcategoryId)
-        : [...prev, subcategoryId]
+    setSelectedSubcategories(
+      selectedSubcategories.includes(subcategoryId)
+        ? selectedSubcategories.filter((id) => id !== subcategoryId)
+        : [...selectedSubcategories, subcategoryId]
     );
   };
 

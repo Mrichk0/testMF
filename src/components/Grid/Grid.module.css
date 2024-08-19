@@ -1,17 +1,3 @@
-/* .gridContainer {
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-.tileWrapper {
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  overflow: hidden;
-} */
-
-
 .gridContainer {
   width: 100%;
   max-width: 100%;

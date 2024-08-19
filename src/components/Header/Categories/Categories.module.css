@@ -47,7 +47,6 @@
   align-items: center;
 }
 
-/* New styles for active categories and subcategories */
 .categoryButtonActive {
   color: grey;
 }

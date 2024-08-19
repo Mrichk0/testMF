@@ -1,10 +1,7 @@
 .allContentList {
-
   margin: 0 auto;
   padding: 100px 20px 0 20px;
- 
-
-}
+ }
 
 .loading, .error, .loader {
   text-align: center;
