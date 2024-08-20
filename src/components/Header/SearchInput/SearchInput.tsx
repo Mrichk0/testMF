@@ -59,7 +59,6 @@ const SearchInput: React.FC = () => {
       <Dropdown
         isOpen={isDropdownOpen}
         onClose={() => setIsDropdownOpen(false)}
-        title={t("searchResults")}
         items={searchResults}
         groupByCategory={true}
       />

@@ -13,6 +13,7 @@ export interface AllContent {
   slug: string;
   start_date: string;
   end_date: string;
+  archive: boolean;
   years: Year[];
   cover: string | null;
   category: {
@@ -26,15 +27,13 @@ export interface AllContent {
   };
   audio: any | null;
   video: any | null;
-  // photo: {
-  //   id: string;
-  // } | null;
   translations: {
     id: number;
     allContent_id: number;
     languages_code: string;
     title: string;
     description: string;
+    date_tag: string | null;
   }[];
   subcategories: {
     id: number;
@@ -64,9 +63,4 @@ export interface FetchFilteredAllContentParams {
   subcategoryIds: string[];
   filters: Filters;
   selectedYear: number | null;
-}
-
-export interface SubcategoryTranslation {
-  languages_code: string;
-  subcategory_name: string;
 }

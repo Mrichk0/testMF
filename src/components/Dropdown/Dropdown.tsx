@@ -10,7 +10,7 @@ import styles from "./Dropdown.module.css";
 interface DropdownProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
+
   items: AllContent[];
   groupByCategory?: boolean;
   onItemRemove?: (itemId: number) => void;
@@ -19,7 +19,7 @@ interface DropdownProps {
 const Dropdown: React.FC<DropdownProps> = ({
   isOpen,
   onClose,
-  title,
+
   items,
   groupByCategory = false,
   onItemRemove,
@@ -30,8 +30,6 @@ const Dropdown: React.FC<DropdownProps> = ({
   const { getTranslation } = useTranslatedContent();
 
   const groupedItems = React.useMemo(() => {
-    if (!groupByCategory) return { [title]: items };
-
     return items.reduce((acc, item) => {
       const category =
         item.category?.translations?.[0]?.category_name || t("uncategorized");
@@ -39,7 +37,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       acc[category].push(item);
       return acc;
     }, {} as Record<string, AllContent[]>);
-  }, [items, groupByCategory, t, title]);
+  }, [items, groupByCategory, t]);
 
   const handleItemClick = (item: AllContent) => {
     const categorySlug = item.category?.slug || "uncategorized";
@@ -55,7 +53,6 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <div className={styles.dropdown}>
       <div className={styles.dropdownHeader}>
-        <h3>{title}</h3>
         <button onClick={onClose} className={styles.closeButton}>
           ×
         </button>
@@ -64,7 +61,10 @@ const Dropdown: React.FC<DropdownProps> = ({
         {Object.entries(groupedItems).map(([category, categoryItems]) => (
           <div key={category} className={styles.categoryGroup}>
             {groupByCategory && (
-              <h4 className={styles.categoryTitle}>{category}</h4>
+              <h4 className={styles.categoryTitle}>
+                {getTranslation(categoryItems[0].category, "category_name") ||
+                  category}
+              </h4>
             )}
             {categoryItems.map((item) => (
               <div
@@ -73,14 +73,13 @@ const Dropdown: React.FC<DropdownProps> = ({
                 onClick={() => handleItemClick(item)}
               >
                 <h5 className={styles.contentTitle}>
-                  {item.translations?.[0]?.title || "Untitled"}
+                  {getTranslation(item, "title") || "Untitled"}
                 </h5>
                 <AllContentDetailsList
                   content={item}
                   className={styles.courseDetails}
                   itemClassName={styles.courseDetailsItem}
                   showTags={true}
-                  showCategory={true}
                 />
                 {onItemRemove && (
                   <button

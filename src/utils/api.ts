@@ -1,40 +1,8 @@
 import axios from "axios";
-import { AllContent, Filters, SubcategoryTranslation } from "../types";
+import { AllContent, Filters } from "../types";
 import { Category, Subcategory } from "../types/categories";
 
 const API_URL = "http://0.0.0.0:8055";
-
-export const getSubcategoryTranslations = async (
-  subcategoryId: number
-): Promise<SubcategoryTranslation[]> => {
-  try {
-    const response = await axios.get(`${API_URL}/items/subcategories`, {
-      params: {
-        filter: { id: { _eq: subcategoryId } },
-        fields: ["id", "translations.*"],
-      },
-    });
-
-    if (response.data.data && response.data.data.length > 0) {
-      const subcategory = response.data.data[0];
-      return subcategory.translations.map((translation: any) => ({
-        languages_code: translation.languages_code,
-        subcategory_name: translation.subcategory_name,
-      }));
-    } else {
-      console.warn(
-        `No translations found for subcategory with id ${subcategoryId}`
-      );
-      return [];
-    }
-  } catch (error) {
-    console.error(
-      `Error fetching translations for subcategory ${subcategoryId}:`,
-      error
-    );
-    throw error;
-  }
-};
 
 export const fetchCategoriesAndCourses = async (): Promise<{
   categories: Category[];
@@ -90,6 +58,7 @@ export const fetchFilteredAllContent = async ({
       "translations.*",
       "start_date",
       "end_date",
+      "archive",
       "years",
       "years.years_id.year",
       "cover",
@@ -97,6 +66,7 @@ export const fetchFilteredAllContent = async ({
       "category.translations.*",
       "category.slug",
       "subcategories.subcategories_id",
+      "subcategories.subcategories_id.translations.*",
       "subcategories.translations.*",
       "slug",
     ],
@@ -126,8 +96,6 @@ export const fetchFilteredAllContent = async ({
         },
       });
     }
-
-    console.log("Final API request params:", JSON.stringify(params, null, 2));
 
     if (categoryId) {
       params.filter._and.push({
@@ -174,8 +142,6 @@ export const fetchFilteredAllContent = async ({
     const response = await axios.get(`${API_URL}/items/allContent`, {
       params,
     });
-
-    console.log("API response ALL CONTENT FILTER:", response.data);
 
     return {
       data: response.data.data,
@@ -230,6 +196,7 @@ export const searchAllContent = async (
       "category.id",
       "category.slug",
       "category.translations.*",
+      "subcategories.subcategories_id.translations.*",
       "subcategories.subcategories_id",
       "subcategories.translations.*",
       "start_date",
@@ -259,6 +226,8 @@ export const searchAllContent = async (
 
   try {
     const response = await axios.get(`${API_URL}/items/allContent`, { params });
+
+    console.log("API response SEARCH ALL CONTENT:", response.data);
     return response.data.data;
   } catch (error) {
     console.error("Error searching content:", error);

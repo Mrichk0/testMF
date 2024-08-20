@@ -41,7 +41,11 @@ export const useSavedContent = () => {
       try {
         const response = await axios.get(`${API_URL}/items/allContent`, {
           params: {
-            fields: ["*.*", "category.translations.*"],
+            fields: [
+              "*.*",
+              "category.translations.*",
+              "subcategories.subcategories_id.translations.*",
+            ],
             filter: {
               id: {
                 _in: savedContentIds,
