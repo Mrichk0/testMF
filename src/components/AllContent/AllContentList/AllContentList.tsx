@@ -1,16 +1,18 @@
-import React, { useEffect, useCallback, useMemo, useState } from "react";
+import React, { useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
+import { useTranslation } from "react-i18next";
+
+import { useTranslatedContent } from "../../../hooks/useTranslatedContent";
 import { useFilters } from "../../../hooks/useFilters";
 import { useAllContent } from "../../../hooks/useAllContent";
+
 import AllContentItem from "../AllContentItem/AllContentItem";
 import YearsList from "../../YearsList/YearsList";
+import SaveContentButton from "../../Buttons/SaveButton/SaveContentButton";
 
-import { getSubcategoryTranslations } from "../../../utils/api";
 import { AllContent } from "../../../types";
 import styles from "./AllContentList.module.css";
-import SaveContentButton from "../../Buttons/SaveButton/SaveContentButton";
 
 const getCategorySlug = (content: AllContent): string => {
   if (!content || !content.category || !content.category.slug) {
@@ -20,7 +22,7 @@ const getCategorySlug = (content: AllContent): string => {
 };
 
 const AllContentList: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { filters, selectedCategory, selectedSubcategories, selectedYear } =
     useFilters();
@@ -29,7 +31,7 @@ const AllContentList: React.FC = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading,
+    // isLoading,
     isError,
     error,
   } = useAllContent({
@@ -39,9 +41,7 @@ const AllContentList: React.FC = () => {
     selectedYear,
   });
 
-  const [categoryInfos, setCategoryInfos] = useState<{ [key: number]: string }>(
-    {}
-  );
+  const { getTranslation } = useTranslatedContent();
 
   const { ref: infiniteScrollRef, inView } = useInView({ threshold: 0 });
 
@@ -60,121 +60,6 @@ const AllContentList: React.FC = () => {
     [navigate]
   );
 
-  const getTranslation = useCallback(
-    (
-      translations: AllContent["translations"],
-      field: "title" | "description"
-    ) => {
-      const translation =
-        translations.find((t) => t.languages_code === i18n.language) ||
-        translations[0];
-      return translation ? translation[field] : "";
-    },
-    [i18n.language]
-  );
-
-  const getCategoryInfo = useCallback(
-    async (content: AllContent) => {
-      let categoryName = t("uncategorized");
-      if (content.category && content.category.translations) {
-        const categoryTranslation =
-          content.category.translations.find(
-            (trans) => trans.languages_code === i18n.language
-          ) || content.category.translations[0];
-
-        if (categoryTranslation) {
-          categoryName = categoryTranslation.category_name;
-        } else {
-          categoryName = content.category.slug;
-        }
-      }
-
-      let subcategoryNames: string[] = [];
-      if (
-        Array.isArray(content.subcategories) &&
-        content.subcategories.length > 0
-      ) {
-        for (const sub of content.subcategories) {
-          try {
-            const subTranslations = await getSubcategoryTranslations(
-              sub.subcategories_id
-            );
-            const subTranslation =
-              subTranslations.find(
-                (trans) => trans.languages_code === i18n.language
-              ) || subTranslations[0];
-
-            if (subTranslation) {
-              subcategoryNames.push(subTranslation.subcategory_name);
-            } else {
-              subcategoryNames.push(`Subcategory ${sub.subcategories_id}`);
-            }
-          } catch (error) {
-            subcategoryNames.push(`Subcategory ${sub.subcategories_id}`);
-          }
-        }
-      }
-
-      return `${categoryName}${
-        subcategoryNames.length > 0 ? ` / ${subcategoryNames.join(", ")}` : ""
-      }`;
-    },
-    [t, i18n.language]
-  );
-
-  useEffect(() => {
-    const fetchCategoryInfos = async () => {
-      if (data?.pages) {
-        const newCategoryInfos: { [key: number]: string } = {};
-        for (const page of data.pages) {
-          for (const content of page.data) {
-            if (!categoryInfos[content.id]) {
-              newCategoryInfos[content.id] = await getCategoryInfo(content);
-            }
-          }
-        }
-        setCategoryInfos((prev) => ({ ...prev, ...newCategoryInfos }));
-      }
-    };
-
-    fetchCategoryInfos();
-  }, [data, getCategoryInfo]);
-
-  const formatDateRange = useCallback(
-    (start: string, end: string) => {
-      const startDate = new Date(start);
-      const endDate = new Date(end);
-      const options: Intl.DateTimeFormatOptions = {
-        day: "numeric",
-        month: "long",
-      };
-
-      if (startDate.getMonth() === endDate.getMonth()) {
-        return `${startDate.getDate()}-${endDate.getDate()} ${startDate.toLocaleDateString(
-          i18n.language,
-          { month: "long" }
-        )}`;
-      } else {
-        return `${startDate.toLocaleDateString(
-          i18n.language,
-          options
-        )} - ${endDate.toLocaleDateString(i18n.language, options)}`;
-      }
-    },
-    [i18n.language]
-  );
-
-  const getContentInfo = useCallback(
-    (content: AllContent) => {
-      const contentTypes = [];
-      if (content.video) contentTypes.push(t("video"));
-      if (content.photo) contentTypes.push(t("photo"));
-      if (content.audio) contentTypes.push(t("audio"));
-      return contentTypes.join(", ");
-    },
-    [t]
-  );
-
   const allContentList = useMemo(
     () => data?.pages.flatMap((page) => page.data) ?? [],
     [data]
@@ -184,32 +69,21 @@ const AllContentList: React.FC = () => {
     return allContentList.map((content) => (
       <AllContentItem
         key={content.id}
-        title={getTranslation(content.translations, "title")}
-        description={getTranslation(content.translations, "description")}
-        categoryInfo={categoryInfos[content.id] || t("loading")}
-        dateRange={formatDateRange(content.start_date, content.end_date)}
-        contentInfo={getContentInfo(content)}
-        isCurrent={content.is_current}
+        title={getTranslation(content, "title")}
+        description={getTranslation(content, "description")}
+        buttonName={getTranslation(content, "button_name")}
         photoUrl={
-          content.photo
-            ? `http://0.0.0.0:8055/assets/${content.photo.id}`
+          content.cover
+            ? `http://0.0.0.0:8055/assets/${content.cover}`
             : undefined
         }
         onProgramClick={() => handleProgramClick(content)}
         saveButton={<SaveContentButton content={content} />}
+        content={content}
       />
     ));
-  }, [
-    allContentList,
-    getTranslation,
-    categoryInfos,
-    t,
-    formatDateRange,
-    getContentInfo,
-    handleProgramClick,
-  ]);
+  }, [allContentList, getTranslation, handleProgramClick]);
 
-  // if (isLoading) return <div className="loading">{t("loading")}</div>;
   if (isError)
     return <div className="error">Error: {(error as Error).message}</div>;
 

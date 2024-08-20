@@ -8,6 +8,7 @@ export interface AllContent {
   start_date: string;
   end_date: string;
   year: number;
+  cover: string | null;
   category: {
     id: string;
     sort: number;
@@ -57,4 +58,9 @@ export interface FetchFilteredAllContentParams {
   subcategoryIds: string[];
   filters: Filters;
   selectedYear: number | null;
+}
+
+export interface SubcategoryTranslation {
+  languages_code: string;
+  subcategory_name: string;
 }

@@ -1,13 +1,8 @@
 import axios from "axios";
-import { AllContent, Filters } from "../types";
+import { AllContent, Filters, SubcategoryTranslation } from "../types";
 import { Category, Subcategory } from "../types/categories";
 
 const API_URL = "http://0.0.0.0:8055";
-
-interface SubcategoryTranslation {
-  languages_code: string;
-  subcategory_name: string;
-}
 
 export const getSubcategoryTranslations = async (
   subcategoryId: number
@@ -96,9 +91,8 @@ export const fetchFilteredAllContent = async ({
       "start_date",
       "end_date",
       "year",
-      "photo.*",
-      "video",
-      "audio",
+      "years",
+      "cover",
       "category.id",
       "category.translations.*",
       "category.slug",
@@ -188,7 +182,7 @@ export const fetchFilteredAllContent = async ({
 
 export const fetchAllContentDetails = async (slug: string) => {
   try {
-    const pagesResponse = await axios.get(`${API_URL}/items/pages`, {
+    const pagesResponse = await axios.get(`${API_URL}/items/allContent`, {
       params: {
         filter: {
           slug: {
@@ -198,8 +192,6 @@ export const fetchAllContentDetails = async (slug: string) => {
         fields: [
           "slug",
           "status",
-          "date_created",
-          "date_updated",
           "translations.*",
           "template.*",
           "template.translations.*",
@@ -232,7 +224,6 @@ export const searchAllContent = async (
       "category.translations.*",
       "subcategories.subcategories_id",
       "subcategories.translations.*",
-      "video",
       "start_date",
       "end_date",
       "slug",

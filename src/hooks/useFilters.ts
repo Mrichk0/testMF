@@ -15,6 +15,7 @@ export const useFilters = () => {
   const [selectedSubcategories, setSelectedSubcategories] = useLocalStorage<
     string[]
   >("selectedSubcategories", []);
+
   const [selectedYear, setSelectedYear] = useLocalStorage<number | null>(
     "selectedYear",
     null

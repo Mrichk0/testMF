@@ -1,13 +1,13 @@
 import React, { memo } from "react";
-import { useTranslation } from "react-i18next";
+import AllContentDetailsList from "../../AllContentDetailsList/AllContentDetailsList";
+import { AllContent } from "../../../types";
 
 interface AllContentItemProps {
   title: string;
   description: string;
-  categoryInfo: string;
-  dateRange: string;
-  contentInfo: string;
-  isCurrent: boolean | undefined;
+  buttonName: string;
+  content: AllContent;
+  // isCurrent: boolean | undefined;
   photoUrl: string | undefined;
   onProgramClick: () => void;
   saveButton: React.ReactNode;
@@ -17,16 +17,12 @@ const AllContentItem: React.FC<AllContentItemProps> = memo(
   ({
     title,
     description,
-    categoryInfo,
-    dateRange,
-    contentInfo,
-    isCurrent,
+    buttonName,
     photoUrl,
     onProgramClick,
     saveButton,
+    content,
   }) => {
-    const { t } = useTranslation();
-
     return (
       <div className="course-item">
         <h2 className="course-title">{title}</h2>
@@ -40,18 +36,11 @@ const AllContentItem: React.FC<AllContentItemProps> = memo(
           />
         )}
         <div className="course-details">
-          <p className="course-category">{categoryInfo}</p>
-          <p className="course-date">{dateRange}</p>
-          <p className="course-content">
-            {t("contains")}: {contentInfo}
-          </p>
-          <p className="course-status">
-            {isCurrent ? t("actual") : t("archive")}
-          </p>
+          <AllContentDetailsList content={content} />
         </div>
         <div className="course-actions">
           <button onClick={onProgramClick} className="program-button">
-            {t("courseProgram")}
+            {buttonName}
           </button>
           {saveButton}
         </div>

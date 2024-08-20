@@ -11,6 +11,7 @@ const YearsList: React.FC = () => {
     selectedCategory,
     selectedSubcategories,
   } = useFilters();
+
   const { data: allContentData } = useAllContent({
     selectedCategory,
     selectedSubcategories,

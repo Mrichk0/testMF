@@ -2,7 +2,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { AllContent } from "../../types";
-import CourseDetailsList from "../AllContentDetailsList/AllContentDetailsList";
+import AllContentDetailsList from "../AllContentDetailsList/AllContentDetailsList";
+
+import { useTranslatedContent } from "../../hooks/useTranslatedContent";
 import styles from "./Dropdown.module.css";
 
 interface DropdownProps {
@@ -25,6 +27,8 @@ const Dropdown: React.FC<DropdownProps> = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const { getTranslation } = useTranslatedContent();
+
   const groupedItems = React.useMemo(() => {
     if (!groupByCategory) return { [title]: items };
 
@@ -43,9 +47,6 @@ const Dropdown: React.FC<DropdownProps> = ({
     const path = `/${categorySlug}/${itemSlug}`;
 
     navigate(path);
-    // if (onItemClick) {
-    //   onItemClick(item);
-    // }
     onClose();
   };
 
@@ -74,10 +75,12 @@ const Dropdown: React.FC<DropdownProps> = ({
                 <h5 className={styles.contentTitle}>
                   {item.translations?.[0]?.title || "Untitled"}
                 </h5>
-                <CourseDetailsList
+                <AllContentDetailsList
                   content={item}
                   className={styles.courseDetails}
                   itemClassName={styles.courseDetailsItem}
+                  showTags={true}
+                  showCategory={true}
                 />
                 {onItemRemove && (
                   <button
