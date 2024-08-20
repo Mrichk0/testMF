@@ -32,13 +32,22 @@ const YearsList: React.FC = () => {
   }, []);
 
   const yearsWithContent = useMemo(() => {
-    if (!allContentData) return new Set();
-    const years = new Set();
+    if (!allContentData || !allContentData.pages) return new Set<number>();
+
+    const years = new Set<number>();
+
     allContentData.pages.forEach((page) => {
       page.data.forEach((content) => {
-        if (content.year) years.add(content.year);
+        if (content.years && Array.isArray(content.years)) {
+          content.years.forEach((yearObj) => {
+            if (yearObj.years_id && typeof yearObj.years_id.year === "number") {
+              years.add(yearObj.years_id.year);
+            }
+          });
+        }
       });
     });
+
     return years;
   }, [allContentData]);
 

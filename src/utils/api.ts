@@ -90,8 +90,8 @@ export const fetchFilteredAllContent = async ({
       "translations.*",
       "start_date",
       "end_date",
-      "year",
       "years",
+      "years.years_id.year",
       "cover",
       "category.id",
       "category.translations.*",
@@ -117,11 +117,17 @@ export const fetchFilteredAllContent = async ({
 
     if (selectedYear) {
       params.filter._and.push({
-        year: {
-          _eq: selectedYear,
+        years: {
+          years_id: {
+            year: {
+              _eq: selectedYear,
+            },
+          },
         },
       });
     }
+
+    console.log("Final API request params:", JSON.stringify(params, null, 2));
 
     if (categoryId) {
       params.filter._and.push({
@@ -168,6 +174,8 @@ export const fetchFilteredAllContent = async ({
     const response = await axios.get(`${API_URL}/items/allContent`, {
       params,
     });
+
+    console.log("API response ALL CONTENT FILTER:", response.data);
 
     return {
       data: response.data.data,

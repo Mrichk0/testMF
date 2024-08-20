@@ -1,3 +1,9 @@
+export interface Year {
+  years_id: {
+    [key: string]: any;
+  };
+  year: number;
+}
 export interface AllContent {
   id: number;
   status: string;
@@ -7,7 +13,7 @@ export interface AllContent {
   slug: string;
   start_date: string;
   end_date: string;
-  year: number;
+  years: Year[];
   cover: string | null;
   category: {
     id: string;
@@ -20,9 +26,9 @@ export interface AllContent {
   };
   audio: any | null;
   video: any | null;
-  photo: {
-    id: string;
-  } | null;
+  // photo: {
+  //   id: string;
+  // } | null;
   translations: {
     id: number;
     allContent_id: number;
