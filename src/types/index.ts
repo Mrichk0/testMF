@@ -1,3 +1,5 @@
+import { Tag } from "./tags";
+
 export interface Year {
   years_id: {
     [key: string]: any;
@@ -16,6 +18,7 @@ export interface AllContent {
   archive: boolean;
   years: Year[];
   cover: string | null;
+  tags: Tag[];
   category: {
     id: string;
     sort: number;
@@ -28,6 +31,7 @@ export interface AllContent {
   audio: any | null;
   video: any | null;
   translations: {
+    tags: string[] | null;
     id: number;
     allContent_id: number;
     languages_code: string;
@@ -50,17 +54,10 @@ export interface AllContentItemProps {
   isSaved: boolean;
 }
 
-export interface Filters {
-  hasVideo: boolean;
-  hasAudio: boolean;
-  hasPhoto: boolean;
-  isActual?: boolean;
-}
-
 export interface FetchFilteredAllContentParams {
   pageParam?: number;
   categoryId: string | null;
   subcategoryIds: string[];
-  filters: Filters;
+
   selectedYear: number | null;
 }

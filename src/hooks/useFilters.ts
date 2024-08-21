@@ -1,12 +1,14 @@
 import { useCallback } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { Filters } from "../types";
+
+interface Filters {
+  archiveStatus: "current" | "archive" | null;
+  [key: string]: boolean | "current" | "archive" | null;
+}
 
 export const useFilters = () => {
   const [filters, setFilters] = useLocalStorage<Filters>("courseFilters", {
-    hasVideo: false,
-    hasAudio: false,
-    hasPhoto: false,
+    archiveStatus: null,
   });
 
   const [selectedCategory, setSelectedCategory] = useLocalStorage<
@@ -22,38 +24,28 @@ export const useFilters = () => {
   );
 
   const handleFilterChange = useCallback(
-    (filterName: keyof Filters) => {
-      setFilters((prev) => {
-        const newFilters = {
-          ...prev,
-          [filterName]: !prev[filterName],
-        };
-
-        return newFilters;
-      });
+    (filterName: string, value: boolean) => {
+      setFilters((prev) => ({
+        ...prev,
+        [filterName]: value,
+      }));
     },
     [setFilters]
   );
 
-  const handleActualChange = useCallback(
-    (value: boolean | null) => {
-      setFilters((prev: any) => {
-        const newFilters = {
-          ...prev,
-          isActual: prev.isActual === value ? null : value,
-        };
-
-        return newFilters;
-      });
+  const handleArchiveChange = useCallback(
+    (value: "current" | "archive" | null) => {
+      setFilters((prev) => ({
+        ...prev,
+        archiveStatus: prev.archiveStatus === value ? null : value,
+      }));
     },
     [setFilters]
   );
 
   const clearAllFilters = useCallback(() => {
     setFilters({
-      hasVideo: false,
-      hasAudio: false,
-      hasPhoto: false,
+      archiveStatus: null,
     });
     setSelectedCategory(null);
     setSelectedSubcategories([]);
@@ -71,7 +63,7 @@ export const useFilters = () => {
     selectedSubcategories,
     selectedYear,
     handleFilterChange,
-    handleActualChange,
+    handleArchiveChange,
     setSelectedCategory: (category: string | null) => {
       setSelectedCategory(category);
     },

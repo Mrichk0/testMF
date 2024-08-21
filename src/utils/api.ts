@@ -1,8 +1,23 @@
 import axios from "axios";
-import { AllContent, Filters } from "../types";
+import { AllContent } from "../types";
 import { Category, Subcategory } from "../types/categories";
+import { Tag } from "../types/tags";
 
 const API_URL = "http://0.0.0.0:8055";
+
+export const fetchTags = async (): Promise<Tag[]> => {
+  try {
+    const response = await axios.get(`${API_URL}/items/tags`, {
+      params: {
+        fields: ["translations.*", "*.*"],
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching tags:", error);
+    throw error;
+  }
+};
 
 export const fetchCategoriesAndCourses = async (): Promise<{
   categories: Category[];
@@ -36,7 +51,7 @@ export interface FetchFilteredAllContentParams {
   pageParam?: number;
   categoryId: string | null;
   subcategoryIds: string[];
-  filters: Filters;
+  filters: any;
   selectedYear: number | null;
 }
 
@@ -55,9 +70,8 @@ export const fetchFilteredAllContent = async ({
   let params: any = {
     fields: [
       "id",
+      "date_created",
       "translations.*",
-      "start_date",
-      "end_date",
       "archive",
       "years",
       "years.years_id.year",
@@ -68,74 +82,78 @@ export const fetchFilteredAllContent = async ({
       "subcategories.subcategories_id",
       "subcategories.subcategories_id.translations.*",
       "subcategories.translations.*",
+      "tags.tags_id.translations.*",
+      "tags.tags_id",
+      "tags.translations.*",
       "slug",
     ],
-    sort: ["-start_date"],
+    sort: ["-date_created"],
     page: pageParam,
     limit: limit,
   };
 
-  if (
-    categoryId ||
-    subcategoryIds.length > 0 ||
-    Object.values(filters).some(Boolean) ||
-    selectedYear
-  ) {
-    params.filter = {
-      _and: [],
-    };
+  let filterConditions = [];
 
-    if (selectedYear) {
-      params.filter._and.push({
-        years: {
-          years_id: {
-            year: {
-              _eq: selectedYear,
+  if (selectedYear) {
+    filterConditions.push({
+      years: {
+        years_id: {
+          year: {
+            _eq: selectedYear,
+          },
+        },
+      },
+    });
+  }
+
+  if (categoryId) {
+    filterConditions.push({
+      category: {
+        id: {
+          _eq: categoryId,
+        },
+      },
+    });
+  }
+
+  if (subcategoryIds.length > 0) {
+    filterConditions.push({
+      subcategories: {
+        subcategories_id: {
+          _in: subcategoryIds,
+        },
+      },
+    });
+  }
+
+  if (filters) {
+    if (filters.archiveStatus === "current") {
+      filterConditions.push({ archive: { _null: true } });
+    } else if (filters.archiveStatus === "archive") {
+      filterConditions.push({ archive: { _nnull: true } });
+    }
+
+    const activeTagIds = Object.entries(filters)
+      .filter(([key, value]) => key !== "archiveStatus" && value)
+      .map(([key]) => key);
+
+    if (activeTagIds.length > 0) {
+      filterConditions.push({
+        tags: {
+          tags_id: {
+            id: {
+              _in: activeTagIds,
             },
           },
         },
       });
     }
-
-    if (categoryId) {
-      params.filter._and.push({
-        category: {
-          id: {
-            _eq: categoryId,
-          },
-        },
-      });
-    }
-
-    if (subcategoryIds.length > 0) {
-      params.filter._and.push({
-        subcategories: {
-          subcategories_id: {
-            _in: subcategoryIds,
-          },
-        },
-      });
-    }
-
-    if (filters.hasVideo) {
-      params.filter._and.push({ video: { _nnull: true } });
-    }
-    if (filters.hasAudio) {
-      params.filter._and.push({ audio: { _nnull: true } });
-    }
-    if (filters.hasPhoto) {
-      params.filter._and.push({ photo: { _nnull: true } });
-    }
-    if (filters.isActual !== null) {
-      const now = new Date().toISOString();
-      params.filter._and.push({
-        end_date: filters.isActual ? { _gte: now } : { _lt: now },
-      });
-    }
   }
 
-  if (params.filter && params.filter._and.length === 0) {
-    delete params.filter;
+  if (filterConditions.length > 0) {
+    params.filter = {
+      _and: filterConditions,
+    };
   }
 
   try {
@@ -199,8 +217,11 @@ export const searchAllContent = async (
       "subcategories.subcategories_id.translations.*",
       "subcategories.subcategories_id",
       "subcategories.translations.*",
-      "start_date",
-      "end_date",
+      "tags.tags_id.translations.*",
+      "tags.tags_id",
+      "tags.translations.*",
+      // "start_date",
+      // "end_date",
       "slug",
     ],
     filter: {
@@ -227,7 +248,6 @@ export const searchAllContent = async (
   try {
     const response = await axios.get(`${API_URL}/items/allContent`, { params });
 
-    console.log("API response SEARCH ALL CONTENT:", response.data);
     return response.data.data;
   } catch (error) {
     console.error("Error searching content:", error);

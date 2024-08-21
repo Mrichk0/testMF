@@ -18,7 +18,7 @@ const Categories: React.FC = () => {
     selectedSubcategories,
     selectedYear,
     handleFilterChange,
-    handleActualChange,
+    handleArchiveChange,
     setSelectedCategory,
     setSelectedSubcategories,
     clearAllFilters,
@@ -121,10 +121,10 @@ const Categories: React.FC = () => {
             </button>
           </Link>
           <AdditionalFilter
-            filters={filters}
-            handleFilterChange={handleFilterChange}
-            handleActualChange={handleActualChange}
-            clearAllFilters={clearAllFilters}
+            // filters={filters}
+            // handleFilterChange={handleFilterChange}
+            // handleArchiveChange={handleArchiveChange}
+            // clearAllFilters={clearAllFilters}
             coursesData={coursesData}
           />
         </ul>

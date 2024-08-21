@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
-
 import classNames from "classnames";
 import { AllContent } from "../../types";
 import { useTranslatedContent } from "../../hooks/useTranslatedContent";
-
 import styles from "./AllContentDetailsList.module.css";
 
 interface ContentDetailsProps {
@@ -18,60 +16,78 @@ const AllContentDetailsList: React.FC<ContentDetailsProps> = React.memo(
     const { getTranslation } = useTranslatedContent();
 
     const tags = useMemo(() => {
-      if (!showTags) return null;
-      const translatedTags = getTranslation(content, "tags");
-      return Array.isArray(translatedTags)
-        ? translatedTags.map((tag) => (
+      if (!showTags || !content?.tags || content.tags.length === 0) return null;
+
+      return content.tags
+        .map((tagWrapper, index) => {
+          const tag = tagWrapper.tags_id;
+          if (!tag) return null;
+
+          const tagText = getTranslation(tag, "tag");
+
+          return (
             <li
-              key={tag}
+              key={`tag-${tag.id || index}`}
               className={classNames(
                 styles.contentDetailsItem,
                 itemClassName,
                 styles.tag
               )}
             >
-              {tag}
+              {tagText}
             </li>
-          ))
-        : null;
-    }, [content, getTranslation, itemClassName, showTags]);
+          );
+        })
+        .filter(Boolean);
+    }, [content?.tags, getTranslation, itemClassName, showTags]);
+
+    const renderListItem = (
+      key: string,
+      content: React.ReactNode,
+      additionalClassName?: string
+    ) => (
+      <li
+        key={key}
+        className={classNames(
+          styles.contentDetailsItem,
+          itemClassName,
+          additionalClassName
+        )}
+      >
+        {content}
+      </li>
+    );
+
+    if (!content) {
+      return null;
+    }
 
     return (
       <ul className={classNames(styles.contentDetails, className)}>
-        <li
-          className={classNames(
-            styles.contentDetailsItem,
-            itemClassName,
+        {content.category &&
+          renderListItem(
+            `category-${content.category.id || "unknown"}`,
+            `${getTranslation(content.category, "category_name")} /`,
             styles.category
           )}
-        >
-          {getTranslation(content.category, "category_name")} {"/"}
-        </li>
-
-        <li
-          className={classNames(
-            styles.contentDetailsItem,
-            itemClassName,
+        {content.subcategories?.[0] &&
+          renderListItem(
+            `subcategory-${
+              content.subcategories[0].subcategories_id || "unknown"
+            }`,
+            getTranslation(
+              content.subcategories[0].subcategories_id,
+              "subcategory_name"
+            ),
             styles.category
           )}
-        >
-          {getTranslation(
-            content.subcategories[0].subcategories_id,
-            "subcategory_name"
-          )}
-        </li>
         {tags}
-        {content.translations[0].date_tag && (
-          <li
-            className={classNames(
-              styles.contentDetailsItem,
-              itemClassName,
-              styles.category
-            )}
-          >
-            {getTranslation(content, "date_tag")}
-          </li>
-        )}
+        {content.translations?.[0]?.date_tag &&
+          renderListItem(
+            "date-tag",
+            getTranslation(content, "date_tag"),
+            styles.category
+          )}
       </ul>
     );
   }

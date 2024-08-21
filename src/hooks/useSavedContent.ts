@@ -45,6 +45,9 @@ export const useSavedContent = () => {
               "*.*",
               "category.translations.*",
               "subcategories.subcategories_id.translations.*",
+              "tags.tags_id.translations.*",
+              "tags.tags_id",
+              "tags.translations.*",
             ],
             filter: {
               id: {

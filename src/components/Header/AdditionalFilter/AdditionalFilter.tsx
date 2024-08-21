@@ -1,63 +1,79 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Filters, AllContent } from "../../../types";
+import { AllContent } from "../../../types";
 import styles from "./AdditionalFilter.module.css";
+import { useFilters } from "../../../hooks/useFilters";
+import { useTags } from "../../../hooks/useTags";
 
 interface AdditionalFilterProps {
-  filters: Filters;
-  handleFilterChange: (filterName: keyof Filters) => void;
-  handleActualChange: (value: boolean | null) => void;
-  clearAllFilters: () => void;
   coursesData: { pages: { data: AllContent[] }[] } | undefined;
 }
 
-const AdditionalFilter: React.FC<AdditionalFilterProps> = ({
-  filters,
-  handleFilterChange,
-  handleActualChange,
-  clearAllFilters,
-  coursesData,
-}) => {
-  const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
+interface ApiTag {
+  id: string;
+  sort: number | null;
+  tag_name: string;
+  translations: { languages_code: string; tag: string }[];
+}
 
-  const availableFilters = useMemo(() => {
-    if (!coursesData || !coursesData.pages)
-      return {
-        hasVideo: false,
-        hasAudio: false,
-        hasPhoto: false,
-        hasActual: false,
-        hasNotActual: false,
-      };
+const AdditionalFilter: React.FC<AdditionalFilterProps> = ({ coursesData }) => {
+  const { t, i18n } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const { filters, handleFilterChange, handleArchiveChange, clearAllFilters } =
+    useFilters();
+  const { data: apiTags, isLoading, error } = useTags();
+
+  const { availableFilters } = useMemo(() => {
+    if (!coursesData || !coursesData.pages) {
+      return { availableFilters: {} };
+    }
 
     const filterAvailability = {
-      hasVideo: false,
-      hasAudio: false,
-      hasPhoto: false,
-      hasActual: false,
-      hasNotActual: false,
+      current: false,
+      archive: false,
     };
-
-    const now = new Date();
 
     coursesData.pages.forEach((page) => {
       page.data.forEach((course) => {
-        if (course.video) filterAvailability.hasVideo = true;
-        if (course.audio) filterAvailability.hasAudio = true;
-        if (course.photo) filterAvailability.hasPhoto = true;
-
-        const endDate = new Date(course.end_date);
-        if (endDate >= now) {
-          filterAvailability.hasActual = true;
+        if (course.archive === null) {
+          filterAvailability.current = true;
         } else {
-          filterAvailability.hasNotActual = true;
+          filterAvailability.archive = true;
         }
       });
     });
 
-    return filterAvailability;
+    return { availableFilters: filterAvailability };
   }, [coursesData]);
+
+  const tagsToUse = useMemo(() => {
+    if (apiTags && apiTags.length > 0) {
+      return apiTags.map((tag: ApiTag) => ({
+        id: tag.id,
+        name:
+          tag.translations.find((t) => t.languages_code === i18n.language)
+            ?.tag || tag.tag_name,
+      }));
+    } else {
+      return [];
+    }
+  }, [apiTags, i18n.language]);
+
+  const handleTagChange = (tagId: string) => {
+    handleFilterChange(tagId, !filters[tagId]);
+  };
+
+  const activeTagsCount = Object.entries(filters).filter(
+    ([key, value]) => key !== "archiveStatus" && value
+  ).length;
+
+  if (isLoading) {
+    console.log("Loading tags...");
+  }
+
+  if (error) {
+    console.error("Error loading tags:", error);
+  }
 
   return (
     <div className={styles.additionalFilters}>
@@ -65,70 +81,56 @@ const AdditionalFilter: React.FC<AdditionalFilterProps> = ({
         onClick={() => setIsOpen(!isOpen)}
         className={styles.dropdownToggle}
       >
-        ˭
+        ˭{" "}
+        {activeTagsCount > 0 && (
+          <span className={styles.activeCount}>({activeTagsCount})</span>
+        )}
       </button>
       {isOpen && (
         <div className={styles.dropdownContent}>
           <div className={styles.filterButtons}>
             <button
-              onClick={() => handleFilterChange("hasVideo")}
+              onClick={() => handleArchiveChange("current")}
               className={`${styles.filterButton} 
-                ${filters.hasVideo ? styles.filterButtonActive : ""} 
                 ${
-                  !availableFilters.hasVideo ? styles.filterButtonDisabled : ""
+                  filters.archiveStatus === "current"
+                    ? styles.filterButtonActive
+                    : ""
+                } 
+                ${
+                  !availableFilters.current ? styles.filterButtonDisabled : ""
                 }`}
-              disabled={!availableFilters.hasVideo}
+              disabled={!availableFilters.current}
             >
-              {t("hasVideo")}
+              {t("current")}
             </button>
             <button
-              onClick={() => handleFilterChange("hasAudio")}
+              onClick={() => handleArchiveChange("archive")}
               className={`${styles.filterButton} 
-                ${filters.hasAudio ? styles.filterButtonActive : ""} 
                 ${
-                  !availableFilters.hasAudio ? styles.filterButtonDisabled : ""
-                }`}
-              disabled={!availableFilters.hasAudio}
-            >
-              {t("hasAudio")}
-            </button>
-            <button
-              onClick={() => handleFilterChange("hasPhoto")}
-              className={`${styles.filterButton} 
-                ${filters.hasPhoto ? styles.filterButtonActive : ""} 
+                  filters.archiveStatus === "archive"
+                    ? styles.filterButtonActive
+                    : ""
+                } 
                 ${
-                  !availableFilters.hasPhoto ? styles.filterButtonDisabled : ""
+                  !availableFilters.archive ? styles.filterButtonDisabled : ""
                 }`}
-              disabled={!availableFilters.hasPhoto}
+              disabled={!availableFilters.archive}
             >
-              {t("hasPhoto")}
+              {t("archive")}
             </button>
           </div>
           <div className={styles.filterButtons}>
-            <button
-              onClick={() => handleActualChange(true)}
-              className={`${styles.filterButton} 
-                ${filters.isActual === true ? styles.filterButtonActive : ""} 
-                ${
-                  !availableFilters.hasActual ? styles.filterButtonDisabled : ""
-                }`}
-              disabled={!availableFilters.hasActual}
-            >
-              {t("actual")}
-            </button>
-            <button
-              onClick={() => handleActualChange(false)}
-              className={`${styles.filterButton} 
-                ${filters.isActual === false ? styles.filterButtonActive : ""} 
-                ${
-                  !availableFilters.hasNotActual
-                    ? styles.filterButtonDisabled
-                    : ""
-                }`}
-              disabled={!availableFilters.hasNotActual}
-            >
-              {t("notActual")}
-            </button>
+            {tagsToUse.map((tag) => (
+              <button
+                key={tag.id}
+                onClick={() => handleTagChange(tag.id)}
+                className={`${styles.filterButton} 
+                  ${filters[tag.id] ? styles.filterButtonActive : ""}`}
+              >
+                {tag.name}
+              </button>
+            ))}
           </div>
           <button onClick={clearAllFilters} className={styles.clearFilters}>
             {t("clear")}
