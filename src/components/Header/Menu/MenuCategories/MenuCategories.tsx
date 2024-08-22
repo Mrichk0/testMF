@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-
 import { useFilters } from "../../../../hooks/useFilters";
 import { useTranslation } from "react-i18next";
 import { useTranslatedContent } from "../../../../hooks/useTranslatedContent";
@@ -29,24 +28,21 @@ const MenuCategories: React.FC = () => {
     });
 
   const handleCategoryClick = (categoryId: string) => {
-    setSelectedCategory((prev) => {
-      const newValue = prev === categoryId ? null : categoryId;
-      return newValue;
-    });
+    setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
     setSelectedSubcategories([]);
   };
-
   const handleSubcategoryClick = (
     categoryId: string,
     subcategoryId: string
   ) => {
     setSelectedCategory(categoryId);
-    setSelectedSubcategories((prev) => {
-      const newValue = prev.includes(subcategoryId)
-        ? prev.filter((id) => id !== subcategoryId)
-        : [...prev, subcategoryId];
-      return newValue;
-    });
+    if (selectedSubcategories.includes(subcategoryId)) {
+      setSelectedSubcategories(
+        selectedSubcategories.filter((id) => id !== subcategoryId)
+      );
+    } else {
+      setSelectedSubcategories([...selectedSubcategories, subcategoryId]);
+    }
   };
 
   const getCategoryId = (category: AllContent["category"]): string => {
@@ -54,32 +50,32 @@ const MenuCategories: React.FC = () => {
   };
 
   const isCategoryDisabled = useMemo(
-    () => (categoryId: string) => {
-      if (!allContentData) return true;
-      const isDisabled = !allContentData.pages.some((page) =>
-        page.data.some((content) => {
-          return getCategoryId(content.category) === categoryId;
-        })
-      );
-      return isDisabled;
-    },
+    () =>
+      (categoryId: string): boolean => {
+        if (!allContentData) return true;
+        return !allContentData.pages.some((page) =>
+          page.data.some(
+            (content) => getCategoryId(content.category) === categoryId
+          )
+        );
+      },
     [allContentData]
   );
 
   const isSubcategoryDisabled = useMemo(
-    () => (categoryId: string, subcategoryId: string) => {
-      if (!allContentData) return true;
-      const isDisabled = !allContentData.pages.some((page) =>
-        page.data.some((content) => {
-          const hasCategory = getCategoryId(content.category) === categoryId;
-          const hasSubcategory = content.subcategories?.some(
-            (sub) => sub.subcategories_id === subcategoryId
-          );
-          return hasCategory && hasSubcategory;
-        })
-      );
-      return isDisabled;
-    },
+    () =>
+      (categoryId: string, subcategoryId: string): boolean => {
+        if (!allContentData) return true;
+        return !allContentData.pages.some((page) =>
+          page.data.some((content) => {
+            const hasCategory = getCategoryId(content.category) === categoryId;
+            const hasSubcategory = content.subcategories?.some(
+              (sub: any) => sub.subcategories_id === subcategoryId
+            );
+            return hasCategory && hasSubcategory;
+          })
+        );
+      },
     [allContentData]
   );
 

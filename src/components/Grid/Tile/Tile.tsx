@@ -9,13 +9,15 @@ interface TileProps {
   };
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://0.0.0.0:8055";
+
 const Tile: React.FC<TileProps> = ({ data }) => {
   const renderContent = () => {
     switch (data.type) {
       case "image":
         return (
           <img
-            src={`http://0.0.0.0:8055/assets/${data.content}`}
+            src={`${API_URL}/assets/${data.content}`}
             alt=""
             className={styles.tileImage}
           />

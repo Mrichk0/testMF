@@ -1,12 +1,29 @@
 import { useCallback } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
+type ArchiveStatus = "current" | "archive" | null;
+
 interface Filters {
-  archiveStatus: "current" | "archive" | null;
-  [key: string]: boolean | "current" | "archive" | null;
+  archiveStatus: ArchiveStatus;
+  [key: string]: boolean | ArchiveStatus;
 }
 
-export const useFilters = () => {
+interface UseFiltersReturn {
+  filters: Filters;
+  selectedCategory: string | null;
+  selectedSubcategories: string[];
+  selectedYear: number | null;
+  handleFilterChange: (filterName: string, value: boolean) => void;
+  handleArchiveChange: (value: ArchiveStatus) => void;
+  setSelectedCategory: (category: string | null) => void;
+  setSelectedSubcategories: (
+    subcategories: string[] | ((prev: string[]) => string[])
+  ) => void;
+  setSelectedYear: (year: number | null) => void;
+  clearAllFilters: () => void;
+}
+
+export const useFilters = (): UseFiltersReturn => {
   const [filters, setFilters] = useLocalStorage<Filters>("courseFilters", {
     archiveStatus: null,
   });
@@ -34,7 +51,7 @@ export const useFilters = () => {
   );
 
   const handleArchiveChange = useCallback(
-    (value: "current" | "archive" | null) => {
+    (value: ArchiveStatus) => {
       setFilters((prev) => ({
         ...prev,
         archiveStatus: prev.archiveStatus === value ? null : value,
@@ -64,15 +81,9 @@ export const useFilters = () => {
     selectedYear,
     handleFilterChange,
     handleArchiveChange,
-    setSelectedCategory: (category: string | null) => {
-      setSelectedCategory(category);
-    },
-    setSelectedSubcategories: (subcategories: string[]) => {
-      setSelectedSubcategories(subcategories);
-    },
-    setSelectedYear: (year: number | null) => {
-      setSelectedYear(year);
-    },
+    setSelectedCategory,
+    setSelectedSubcategories,
+    setSelectedYear,
     clearAllFilters,
   };
 };

@@ -3,7 +3,7 @@ import { AllContent } from "../types";
 import { Category, Subcategory } from "../types/categories";
 import { Tag } from "../types/tags";
 
-const API_URL = "http://0.0.0.0:8055";
+const API_URL = import.meta.env.VITE_API_URL || "http://0.0.0.0:8055";
 
 export const fetchTags = async (): Promise<Tag[]> => {
   try {

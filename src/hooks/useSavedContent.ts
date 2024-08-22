@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import axios from "axios";
 
-const API_URL = "http://0.0.0.0:8055";
+const API_URL = import.meta.env.VITE_API_URL || "http://0.0.0.0:8055";
 
 export const useSavedContent = () => {
   const [savedContentIds, setSavedContentIds] = useLocalStorage<number[]>(

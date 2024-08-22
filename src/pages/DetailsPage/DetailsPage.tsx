@@ -6,13 +6,16 @@ import useAllContentDetails, { Template } from "../../hooks/useAllContentPage";
 import Grid from "../../components/Grid/Grid";
 import styles from "./DetailsPage.module.css";
 
-const DetailsPage: React.FC = () => {
-  const { slug } = useParams<{ slug: string }>();
+interface DetailsPageProps {
+  slug: string | undefined;
+  categorySlug?: string | undefined;
+}
+
+const DetailsPage: React.FC<DetailsPageProps> = ({ slug: propSlug }) => {
+  const { slug: paramSlug } = useParams<{ slug: string }>();
+  const slug = propSlug || paramSlug;
 
   const { data, isLoading, error } = useAllContentDetails(slug);
-
-  console.log("Data", data);
-  console.log("data transletion", data?.translations[0]?.title);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;

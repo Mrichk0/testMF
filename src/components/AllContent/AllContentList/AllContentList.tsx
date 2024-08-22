@@ -14,6 +14,8 @@ import SaveContentButton from "../../Buttons/SaveButton/SaveContentButton";
 import { AllContent } from "../../../types";
 import styles from "./AllContentList.module.css";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://0.0.0.0:8055";
+
 const getCategorySlug = (content: AllContent): string =>
   content?.category?.slug || "uncategorized";
 
@@ -83,9 +85,7 @@ const AllContentList: React.FC = () => {
               description={description}
               buttonName={buttonName}
               photoUrl={
-                content.cover
-                  ? `http://0.0.0.0:8055/assets/${content.cover}`
-                  : undefined
+                content.cover ? `${API_URL}/assets/${content.cover}` : undefined
               }
               onProgramClick={() => handleProgramClick(content)}
               saveButton={

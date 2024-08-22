@@ -32,7 +32,7 @@ const PathInfo: React.FC<PathInfoProps> = ({ category, pageSlug }) => {
         return fullTitle + (words.length < 4 ? "..." : "");
       }
     }
-    return (pageSlug || "") + "...";
+    return pageSlug || "";
   };
 
   return (
