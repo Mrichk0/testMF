@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import AllContentDetailsList from "../../AllContentDetailsList/AllContentDetailsList";
 import { AllContent } from "../../../types";
 
@@ -7,7 +7,6 @@ interface AllContentItemProps {
   description: string;
   buttonName: string;
   content: AllContent;
-  // isCurrent: boolean | undefined;
   photoUrl: string | undefined;
   onProgramClick: () => void;
   saveButton: React.ReactNode;
@@ -23,16 +22,27 @@ const AllContentItem: React.FC<AllContentItemProps> = memo(
     saveButton,
     content,
   }) => {
+    const [imageError, setImageError] = useState(false);
+
+    const handleImageError = () => {
+      setImageError(true);
+    };
+
     return (
       <div className="course-item">
         <h2 className="course-title">{title}</h2>
-        <p className="course-description">{description}</p>
-        {photoUrl && (
+        {description !== "Field not found" && (
+          <p className="course-description">{description}</p>
+        )}
+        {photoUrl && !imageError && (
           <img
             src={photoUrl}
             alt={title}
             className="course-filter__course-image"
-            width="300"
+            width={300}
+            height={200}
+            loading="lazy"
+            onError={handleImageError}
           />
         )}
         <div className="course-details">

@@ -16,6 +16,11 @@ interface ApiTag {
   translations: { languages_code: string; tag: string }[];
 }
 
+interface AvailableFilters {
+  current: boolean;
+  archive: boolean;
+}
+
 const AdditionalFilter: React.FC<AdditionalFilterProps> = ({ coursesData }) => {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -23,9 +28,9 @@ const AdditionalFilter: React.FC<AdditionalFilterProps> = ({ coursesData }) => {
     useFilters();
   const { data: apiTags, isLoading, error } = useTags();
 
-  const { availableFilters } = useMemo(() => {
+  const availableFilters = useMemo<AvailableFilters>(() => {
     if (!coursesData || !coursesData.pages) {
-      return { availableFilters: {} };
+      return { current: false, archive: false };
     }
 
     const filterAvailability = {
@@ -43,7 +48,7 @@ const AdditionalFilter: React.FC<AdditionalFilterProps> = ({ coursesData }) => {
       });
     });
 
-    return { availableFilters: filterAvailability };
+    return filterAvailability;
   }, [coursesData]);
 
   const tagsToUse = useMemo(() => {
