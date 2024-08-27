@@ -31,12 +31,30 @@ export default {
 
 
 
+# Navigate to the Directus directory
+cd directus
 
-### Admin
-```shell
-cd admin
+# Start the Directus server using Docker Compose
+docker-compose up
+
+
+
+
+
+# Navigate to the project directory
+cd methodfund-react
+
+# Install all dependencies defined in package.json
+# This command reads the package.json file and installs all the required packages
 npm install
-npm run bootstrap  # npm run migrate:up / npm run migrate:down
-npm run watch # npm run build 
-npm run seed
-npm run serve # npm run daemon 
+
+
+# Build the project for production
+npm run build
+
+# Start the development server using Vite
+npm run dev
+
+
+
+
