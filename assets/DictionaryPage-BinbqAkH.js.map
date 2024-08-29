@@ -1,0 +1,1 @@
+{"version":3,"file":"DictionaryPage-BinbqAkH.js","sources":["../../src/pages/DictionaryPage.tsx"],"sourcesContent":["function DictionaryPage() {\n  return <div>DictionaryPage</div>;\n}\n\nexport default DictionaryPage;\n"],"names":["DictionaryPage","jsx"],"mappings":"wCAAA,SAASA,GAAiB,CACjB,OAAAC,EAAA,IAAC,OAAI,SAAc,gBAAA,CAAA,CAC5B"}
